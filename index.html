@@ -492,6 +492,214 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const API_URL = "https://mnsopti-bot.onrender.com";
+  const STORAGE_KEY = "mnsopti_tickets_v2";
+
+  // expose pour les onclick HTML
+  window.openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
+  window.scrollToTickets = () => {
+    const el = document.getElementById("ticketsSection");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function loadTickets(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+    catch { return []; }
+  }
+  function saveTickets(list){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    renderTickets();
+  }
+  window.clearTickets = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    renderTickets();
+  };
+
+  function updateTicket(id, patch){
+    const list = loadTickets();
+    const idx = list.findIndex(t => t.id === id);
+    if (idx === -1) return;
+    list[idx] = { ...list[idx], ...patch };
+    saveTickets(list);
+  }
+
+  window.removeTicket = (id) => {
+    saveTickets(loadTickets().filter(t => t.id !== id));
+  };
+
+  window.openTicketChannel = (url) => {
+    if (url) window.open(url, "_blank");
+  };
+
+  // Status API
+  async function checkApi(){
+    const el = document.getElementById("apiState");
+    if(!el) return;
+    try{
+      const r = await fetch(API_URL + "/status", { cache:"no-store" });
+      const j = await r.json().catch(()=> ({}));
+      el.textContent = (j.online === true)
+        ? (j.botReady ? "✅ API en ligne (bot prêt)" : "⚠️ API en ligne (bot pas prêt)")
+        : "❌ API inaccessible";
+    }catch{
+      el.textContent = "❌ API inaccessible";
+    }
+  }
+
+  // Render tickets list
+  function renderTickets(){
+    const root = document.getElementById("ticketsList");
+    if(!root) return;
+
+    const list = loadTickets();
+    if(!list.length){
+      root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
+      return;
+    }
+
+    root.innerHTML = list.map(t => `
+      <div class="ticketBox">
+        <div class="ticketTop">
+          <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
+          <div class="ticketId">
+            ID: <b>${escapeHtml(t.id)}</b>
+            • ${new Date(t.createdAt).toLocaleString()}
+            ${t.status ? ` • <b>${escapeHtml(t.status)}</b>` : ""}
+          </div>
+        </div>
+
+        <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
+        <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${escapeHtml(t.contact || "—")}</div>
+
+        <div class="btnRow" style="margin-top:10px;">
+          <button type="button" class="btnGhost" onclick="openTicketChannel('${escapeHtml(t.channelUrl || "")}')">Ouvrir sur Discord</button>
+          <button type="button" class="btnGhost" onclick="closeTicket('${escapeHtml(t.id)}')"
+            ${t.status === "closed" ? "disabled" : ""}>
+            Fermer le ticket
+          </button>
+          <button type="button" class="btnGhost" onclick="removeTicket('${escapeHtml(t.id)}')">Supprimer local</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // Close ticket (calls server)
+  window.closeTicket = async (ticketId) => {
+    const list = loadTickets();
+    const t = list.find(x => x.id === ticketId);
+    if(!t) return;
+
+    if (t.status === "closed") return;
+
+    const ok = confirm("Fermer ce ticket côté Discord ? (Le salon sera verrouillé)");
+    if(!ok) return;
+
+    updateTicket(ticketId, { status: "closing" });
+
+    try{
+      const res = await fetch(API_URL + "/api/ticket/close", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ id: ticketId })
+      });
+      const json = await res.json().catch(()=> ({}));
+
+      if(res.ok && json.ok){
+        updateTicket(ticketId, { status: "closed" });
+        alert("✅ Ticket fermé.");
+      } else {
+        updateTicket(ticketId, { status: "open" });
+        alert("❌ Impossible de fermer: " + (json.error || "Erreur inconnue"));
+      }
+    }catch{
+      updateTicket(ticketId, { status: "open" });
+      alert("❌ Erreur réseau (API inaccessible)");
+    }
+  };
+
+  // Submit ticket (anti double)
+  const ticketForm = document.getElementById("ticketForm");
+  let isSubmitting = false;
+
+  if(ticketForm){
+    ticketForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (isSubmitting) return;
+
+      const submitBtn = ticketForm.querySelector('button[type="submit"]');
+      isSubmitting = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Envoi...";
+      }
+
+      const data = {
+        pseudo: document.getElementById("pseudo")?.value.trim() || "",
+        contact: document.getElementById("contact")?.value.trim() || "",
+        subject: document.getElementById("subject")?.value.trim() || "",
+        details: document.getElementById("details")?.value.trim() || ""
+      };
+
+      try{
+        const res = await fetch(API_URL + "/api/ticket", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json().catch(()=> ({}));
+
+        if(res.ok && json.ok){
+          const ticketId = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
+          const list = loadTickets();
+          list.unshift({
+            id: ticketId,
+            subject: data.subject,
+            details: data.details,
+            contact: data.contact,
+            createdAt: Date.now(),
+            status: "open",
+            channelUrl: json.channelUrl || ""
+          });
+          saveTickets(list);
+
+          alert("✅ Ticket créé ! ID: " + ticketId);
+          if(json.channelUrl) window.open(json.channelUrl, "_blank");
+
+          ticketForm.reset();
+          window.scrollToTickets();
+        } else {
+          alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
+        }
+      } catch {
+        alert("❌ Erreur réseau (API inaccessible)");
+      } finally {
+        isSubmitting = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Créer le ticket";
+        }
+      }
+    });
+  }
+
+  // Init
+  renderTickets();
+  checkApi();
+  setInterval(checkApi, 30000);
+});
+</script>
 
 </body>
 </html>
