@@ -47,14 +47,17 @@ const app = express();
 app.use(helmet());
 app.use(express.json({ limit: "50kb" }));
 
-// CORS : si SITE_ORIGIN est défini -> on restreint, sinon on autorise tout (pratique pour tester)
+// CORS (autorise ton site GitHub Pages à appeler /status + /api/ticket)
 app.use(
   cors({
-    origin: SITE_ORIGIN ? SITE_ORIGIN : true,
+    origin: SITE_ORIGIN ? SITE_ORIGIN : true, // si pas défini, autorise tout (pour tester)
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
   })
 );
+
+// Important pour certains navigateurs (preflight)
+app.options("*", cors());
 
 app.use(rateLimit({ windowMs: 60_000, max: 30 }));
 
