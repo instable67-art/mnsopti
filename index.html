@@ -349,5 +349,149 @@
       }
     });
   </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const API_URL = "https://mnsopti-bot.onrender.com";
+  const STORAGE_KEY = "mnsopti_tickets_v1";
+
+  function openDiscord(){ window.open("https://discord.gg/mnsopti","_blank"); }
+  window.openDiscord = openDiscord;
+
+  function scrollToTickets(){
+    const el = document.getElementById("ticketsSection");
+    if(el) el.scrollIntoView({behavior:"smooth"});
+  }
+  window.scrollToTickets = scrollToTickets;
+
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function loadTickets(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+    catch{ return []; }
+  }
+  function saveTickets(list){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    renderTickets();
+  }
+  function clearTickets(){
+    localStorage.removeItem(STORAGE_KEY);
+    renderTickets();
+  }
+  window.clearTickets = clearTickets;
+
+  function removeTicket(id){
+    const list = loadTickets().filter(t => t.id !== id);
+    saveTickets(list);
+  }
+  window.removeTicket = removeTicket;
+
+  function renderTickets(){
+    const root = document.getElementById("ticketsList");
+    if(!root) return; // ✅ plus d'écran blanc
+
+    const list = loadTickets();
+    if(!list.length){
+      root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
+      return;
+    }
+
+    root.innerHTML = list.map(t => `
+      <div class="ticketBox">
+        <div class="ticketTop">
+          <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
+          <div class="ticketId">ID: <b>${escapeHtml(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}</div>
+        </div>
+        <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
+        <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${escapeHtml(t.contact || "—")}</div>
+        <div class="btnRow" style="margin-top:10px;">
+          <button type="button" class="btnGhost" onclick="openDiscord()">Aller sur Discord</button>
+          <button type="button" class="btnGhost" onclick="removeTicket('${t.id}')">Supprimer</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  async function checkApi(){
+    const el = document.getElementById("apiState");
+    if(!el) return;
+    try{
+      const r = await fetch(API_URL + "/status", { cache:"no-store" });
+      const j = await r.json().catch(()=> ({}));
+      if(j.online === true){
+        el.textContent = j.botReady ? "✅ API en ligne (bot prêt)" : "⚠️ API en ligne (bot pas prêt)";
+      } else {
+        el.textContent = "❌ API inaccessible";
+      }
+    }catch{
+      el.textContent = "❌ API inaccessible";
+    }
+  }
+
+  // Init UI
+  renderTickets();
+  checkApi();
+  setInterval(checkApi, 30000);
+
+  // Form submit
+  const ticketForm = document.getElementById("ticketForm");
+  if(ticketForm){
+    ticketForm.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+
+      const pseudoEl = document.getElementById("pseudo");
+      const contactEl = document.getElementById("contact");
+      const subjectEl = document.getElementById("subject");
+      const detailsEl = document.getElementById("details");
+
+      const data = {
+        pseudo: pseudoEl ? pseudoEl.value.trim() : "",
+        contact: contactEl ? contactEl.value.trim() : "",
+        subject: subjectEl ? subjectEl.value.trim() : "",
+        details: detailsEl ? detailsEl.value.trim() : ""
+      };
+
+      try{
+        const res = await fetch(API_URL + "/api/ticket",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        });
+        const json = await res.json().catch(()=> ({}));
+
+        if(res.ok && json.ok){
+          const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
+          const list = loadTickets();
+          list.unshift({
+            id,
+            subject: data.subject,
+            details: data.details,
+            contact: data.contact,
+            createdAt: Date.now()
+          });
+          saveTickets(list);
+
+          alert("✅ Ticket créé ! ID: " + id);
+          if(json.channelUrl) window.open(json.channelUrl, "_blank");
+
+          ticketForm.reset();
+          scrollToTickets();
+        }else{
+          alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
+        }
+      }catch{
+        alert("❌ Erreur réseau (API inaccessible)");
+      }
+    });
+  }
+});
+</script>
+
 </body>
 </html>
