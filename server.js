@@ -18,6 +18,7 @@ const {
   GUILD_ID,
   TICKETS_CATEGORY_ID,
   STAFF_ROLE_ID,
+  STAFF_ROLE_ID_2, // ✅ deuxième rôle staff (optionnel)
   PORT = 3000,
   SITE_ORIGIN, // ex: https://instable67-art.github.io
 } = process.env;
@@ -26,7 +27,7 @@ if (!DISCORD_TOKEN) {
   console.error("❌ DISCORD_TOKEN manquant");
   process.exit(1);
 }
-if (!GUILD_ID) console.warn("⚠️ GUILD_ID manquant (tickets Discord ne fonctionneront pas)");
+if (!GUILD_ID) console.warn("⚠️ GUILD_ID manquant");
 if (!TICKETS_CATEGORY_ID) console.warn("⚠️ TICKETS_CATEGORY_ID manquant");
 if (!STAFF_ROLE_ID) console.warn("⚠️ STAFF_ROLE_ID manquant");
 
@@ -47,16 +48,14 @@ const app = express();
 app.use(helmet());
 app.use(express.json({ limit: "50kb" }));
 
-// CORS (autorise ton site GitHub Pages à appeler /status + /api/ticket)
+// ✅ CORS
 app.use(
   cors({
-    origin: SITE_ORIGIN ? SITE_ORIGIN : true, // si pas défini, autorise tout (pour tester)
+    origin: SITE_ORIGIN ? SITE_ORIGIN : true, // si vide -> autorise tout (test)
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
   })
 );
-
-// Important pour certains navigateurs (preflight)
 app.options("*", cors());
 
 app.use(rateLimit({ windowMs: 60_000, max: 30 }));
@@ -68,8 +67,22 @@ app.get("/status", (req, res) => {
   res.json({
     online: true,
     botReady: client.isReady(),
+    originAllowed: SITE_ORIGIN || "ANY",
   });
 });
+
+// ---------- Helpers ----------
+function makeTicketId() {
+  return "MNS-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+}
+function safeChannelName(pseudo, ticketId) {
+  const safePseudo =
+    String(pseudo)
+      .toLowerCase()
+      .replace(/[^a-z0-9-_]/g, "")
+      .slice(0, 16) || "user";
+  return `ticket-${safePseudo}-${ticketId.toLowerCase()}`.slice(0, 95);
+}
 
 // ---------- Ticket endpoint ----------
 app.post("/api/ticket", async (req, res) => {
@@ -96,40 +109,66 @@ app.post("/api/ticket", async (req, res) => {
 
     const guild = await client.guilds.fetch(GUILD_ID);
 
-    // ID court pour ton site
-    const ticketId = "MNS-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+    // ✅ Vérifie que la catégorie existe
+    const category = await guild.channels.fetch(TICKETS_CATEGORY_ID).catch(() => null);
+    if (!category || category.type !== ChannelType.GuildCategory) {
+      return res.status(500).json({
+        ok: false,
+        error: "TICKETS_CATEGORY_ID invalide (pas une catégorie)",
+      });
+    }
 
-    // Nom de salon safe
-    const safePseudo = String(pseudo)
-      .toLowerCase()
-      .replace(/[^a-z0-9-_]/g, "")
-      .slice(0, 16) || "user";
+    const ticketId = makeTicketId();
+    const channelName = safeChannelName(pseudo, ticketId);
 
-    const channelName = `ticket-${safePseudo}-${ticketId.toLowerCase()}`.slice(0, 95);
+    // ✅ Permissions : tout le monde caché, staff visible, bot visible
+    const overwrites = [
+      {
+        id: guild.roles.everyone.id,
+        deny: [PermissionsBitField.Flags.ViewChannel],
+      },
+      {
+        id: STAFF_ROLE_ID,
+        allow: [
+          PermissionsBitField.Flags.ViewChannel,
+          PermissionsBitField.Flags.SendMessages,
+          PermissionsBitField.Flags.ReadMessageHistory,
+          PermissionsBitField.Flags.AttachFiles,
+          PermissionsBitField.Flags.EmbedLinks,
+        ],
+      },
+      // bot lui-même
+      {
+        id: client.user.id,
+        allow: [
+          PermissionsBitField.Flags.ViewChannel,
+          PermissionsBitField.Flags.SendMessages,
+          PermissionsBitField.Flags.ReadMessageHistory,
+          PermissionsBitField.Flags.ManageChannels,
+        ],
+      },
+    ];
+
+    // ✅ 2e rôle staff si fourni
+    if (STAFF_ROLE_ID_2) {
+      overwrites.push({
+        id: STAFF_ROLE_ID_2,
+        allow: [
+          PermissionsBitField.Flags.ViewChannel,
+          PermissionsBitField.Flags.SendMessages,
+          PermissionsBitField.Flags.ReadMessageHistory,
+          PermissionsBitField.Flags.AttachFiles,
+          PermissionsBitField.Flags.EmbedLinks,
+        ],
+      });
+    }
 
     const channel = await guild.channels.create({
       name: channelName,
       type: ChannelType.GuildText,
       parent: TICKETS_CATEGORY_ID,
       topic: `Ticket ${ticketId} • Pseudo: ${pseudo} • Contact: ${contact || "—"} • Sujet: ${subject}`,
-      permissionOverwrites: [
-        // Cache à tout le monde
-        {
-          id: guild.roles.everyone.id,
-          deny: [PermissionsBitField.Flags.ViewChannel],
-        },
-        // Staff: accès
-        {
-          id: STAFF_ROLE_ID,
-          allow: [
-            PermissionsBitField.Flags.ViewChannel,
-            PermissionsBitField.Flags.SendMessages,
-            PermissionsBitField.Flags.ReadMessageHistory,
-            PermissionsBitField.Flags.AttachFiles,
-            PermissionsBitField.Flags.EmbedLinks,
-          ],
-        },
-      ],
+      permissionOverwrites: overwrites,
     });
 
     const embed = new EmbedBuilder()
@@ -143,8 +182,11 @@ app.post("/api/ticket", async (req, res) => {
       .setFooter({ text: "MNS OPTI" })
       .setTimestamp(new Date());
 
+    const staffMentions = [`<@&${STAFF_ROLE_ID}>`];
+    if (STAFF_ROLE_ID_2) staffMentions.push(`<@&${STAFF_ROLE_ID_2}>`);
+
     await channel.send({
-      content: `<@&${STAFF_ROLE_ID}> Ticket créé ✅`,
+      content: `${staffMentions.join(" ")} Ticket créé ✅`,
       embeds: [embed],
     });
 
