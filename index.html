@@ -7,7 +7,7 @@
 
 <!-- Police moderne (pro) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" additionally crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
@@ -39,7 +39,7 @@ body{
 }
 ::selection{background: rgba(255,255,255,.18); color: #fff}
 
-/* Scrollbar (Chrome/Edge) */
+/* Scrollbar */
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-track{background: rgba(255,255,255,.03)}
 ::-webkit-scrollbar-thumb{background: rgba(255,255,255,.12); border-radius:999px}
@@ -51,40 +51,17 @@ a:hover{text-decoration:underline}
 .wrap{max-width:1100px;margin:0 auto;padding:22px}
 @media(max-width:980px){ .wrap{padding:16px} }
 
-/* ===== HERO (2 colonnes) ===== */
-.hero{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:18px;
-  align-items:stretch;
+/* ===== TOP BANNER (centré) ===== */
+.top{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
   margin-bottom:18px;
 }
-@media(max-width:980px){
-  .hero{grid-template-columns:1fr}
-}
-
-/* ===== BRAND ===== */
-.brandBlock{
-  text-align:center;
-  margin-top:12px;
-  margin-bottom:10px;
-}
-.brandBlock h1{
-  margin:0;
-  font-size:42px;
-  letter-spacing:1.4px;
-  font-weight:900;
-  line-height:1.05;
-}
-.brandBlock p{
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:14px;
-}
-
-/* ===== BANNER ===== */
 .bannerBox{
   width:100%;
+  max-width:820px;
   border-radius:22px;
   overflow:hidden;
   border:1px solid var(--stroke);
@@ -109,6 +86,25 @@ a:hover{text-decoration:underline}
 }
 .bannerBox:hover .bannerImg{transform:scale(1.06)}
 
+.brandBlock{
+  text-align:center;
+}
+.brandBlock h1{
+  margin:0;
+  font-size:42px;
+  letter-spacing:1.4px;
+  font-weight:900;
+  line-height:1.05;
+}
+.brandBlock p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:14px;
+}
+@media(max-width:900px){
+  .brandBlock h1{font-size:34px}
+}
+
 /* ===== CARDS ===== */
 .card{
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
@@ -124,6 +120,7 @@ a:hover{text-decoration:underline}
   transform: translateY(-2px);
   border-color: var(--stroke2);
 }
+
 h2{
   margin:0 0 12px;
   font-size:18px;
@@ -136,7 +133,17 @@ h2{
   line-height:1.45;
 }
 
-/* ===== HERO SUMMARY LISTS ===== */
+/* ===== TWO EQUAL TEXT CARDS ===== */
+.hero2{
+  display:grid;
+  grid-template-columns: 1fr 1fr; /* égaux */
+  gap:18px;
+  align-items:stretch;
+  margin-bottom:18px;
+}
+@media(max-width:980px){
+  .hero2{grid-template-columns:1fr}
+}
 .boxTitleRow{
   display:flex;
   align-items:center;
@@ -207,7 +214,6 @@ h2{
 }
 @media(max-width:900px){
   .grid{grid-template-columns:1fr}
-  .brandBlock h1{font-size:34px}
 }
 
 /* ===== SHOP ===== */
@@ -440,77 +446,76 @@ footer{
 <body>
 <div class="wrap">
 
-<!-- ===== HERO ===== -->
-<div class="hero">
+<!-- TOP: bannière centrée + titre -->
+<div class="top">
+  <div class="bannerBox" id="bannerBtn">
+    <img src="banner.png" class="bannerImg" alt="MNS OPTI Banner"
+      onerror="this.style.display='none';this.parentElement.innerHTML='<div style=&quot;padding:20px;text-align:center;color:#b9b9b9&quot;>Ajoute <b>banner.png</b> à la racine</div>';">
+  </div>
 
-  <!-- GAUCHE : banner + résumé services optimisation -->
-  <div>
-    <div class="bannerBox" id="bannerBtn">
-      <img src="banner.png" class="bannerImg" alt="MNS OPTI Banner"
-        onerror="this.style.display='none';this.parentElement.innerHTML='<div style=&quot;padding:20px;text-align:center;color:#b9b9b9&quot;>Ajoute <b>banner.png</b> à la racine</div>';">
+  <div class="brandBlock">
+    <h1>MNS OPTI</h1>
+    <p>Boutique + Tickets → Discord</p>
+  </div>
+</div>
+
+<!-- Deux cartes égales : Optimisation (gauche) + NIC (droite) -->
+<div class="hero2">
+
+  <div class="card">
+    <div class="boxTitleRow">
+      <h2 style="margin:0">🛠️ Services d’Optimisation</h2>
+      <span class="tag">FPS • Latence • Stabilité</span>
     </div>
 
-    <div class="brandBlock">
-      <h1>MNS OPTI</h1>
-      <p>Boutique + Tickets → Discord</p>
+    <p class="muted" style="margin:0 0 10px">
+      Optimisations orientées gaming pour améliorer la fluidité, la réactivité et la stabilité de ton PC,
+      avec options BIOS/Windows/NIC et accompagnement rapide.
+    </p>
+
+    <ul class="summaryList">
+      <li><b>Objectifs</b> : hausse des FPS moyens, amélioration des <b>1% / 0.1% lows</b>, sensation de fluidité accrue.</li>
+      <li><b>Approche</b> : réglages adaptés à ta configuration (matériel + usage), sans “one size fits all”.</li>
+      <li><b>Important</b> : aucun overclock inclus par défaut (ajoutable en option).</li>
+    </ul>
+
+    <div class="priceGrid">
+      <div class="priceItem">
+        <div class="priceTop">
+          <div class="priceName">Réglages BIOS</div>
+          <div class="priceValue">15€</div>
+        </div>
+        <div class="muted" style="margin-top:6px">
+          Optimisation BIOS pour performance globale + stabilité (gaming).
+        </div>
+      </div>
+
+      <div class="priceItem">
+        <div class="priceTop">
+          <div class="priceName">Optimisation Basique</div>
+          <div class="priceValue">25€</div>
+        </div>
+        <div class="muted" style="margin-top:6px">
+          Optimisation Windows pour un système gaming stable (drivers + options utiles).
+        </div>
+      </div>
+
+      <div class="priceItem">
+        <div class="priceTop">
+          <div class="priceName">Optimisation Plus</div>
+          <div class="priceValue">35€</div>
+        </div>
+        <div class="muted" style="margin-top:6px">
+          Optimisation avancée personnalisée (Windows 11 24H2, BIOS avancé, NIC, latence).
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="boxTitleRow">
-        <h2 style="margin:0">🛠️ Services d’Optimisation</h2>
-        <span class="tag">FPS • Latence • Stabilité</span>
-      </div>
-
-      <p class="muted" style="margin:0 0 10px">
-        Optimisations orientées gaming pour améliorer la fluidité, la réactivité et la stabilité de ton PC,
-        avec options BIOS/Windows/NIC et accompagnement rapide.
-      </p>
-
-      <ul class="summaryList">
-        <li><b>Objectifs</b> : hausse des FPS moyens, amélioration des <b>1% / 0.1% lows</b>, sensation de fluidité accrue.</li>
-        <li><b>Approche</b> : réglages adaptés à ta configuration (matériel + usage), sans “one size fits all”.</li>
-        <li><b>Important</b> : <b>aucun overclock</b> inclus par défaut (ajoutable en option).</li>
-      </ul>
-
-      <div class="priceGrid">
-        <div class="priceItem">
-          <div class="priceTop">
-            <div class="priceName">Réglages BIOS</div>
-            <div class="priceValue">15€</div>
-          </div>
-          <div class="muted" style="margin-top:6px">
-            Optimisation BIOS pour performance globale + stabilité (gaming).
-          </div>
-        </div>
-
-        <div class="priceItem">
-          <div class="priceTop">
-            <div class="priceName">Optimisation Basique</div>
-            <div class="priceValue">25€</div>
-          </div>
-          <div class="muted" style="margin-top:6px">
-            Optimisation Windows pour un système gaming stable (drivers + options utiles).
-          </div>
-        </div>
-
-        <div class="priceItem">
-          <div class="priceTop">
-            <div class="priceName">Optimisation Plus</div>
-            <div class="priceValue">35€</div>
-          </div>
-          <div class="muted" style="margin-top:6px">
-            Optimisation avancée personnalisée (Windows 11 24H2, BIOS avancé, NIC, latence).
-          </div>
-        </div>
-      </div>
-
-      <div class="hrSoft">
-        <b>Overclock (option)</b> : GPU 5€ • CPU 10€ • RAM 15€ — disponible uniquement en complément des réglages BIOS.
-      </div>
+    <div class="hrSoft">
+      <b>Overclock (option)</b> : GPU 5€ • CPU 10€ • RAM 15€ — disponible uniquement en complément des réglages BIOS.
     </div>
   </div>
 
-  <!-- DROITE : résumé NIC -->
   <div class="card">
     <div class="boxTitleRow">
       <h2 style="margin:0">🧩 MNS NIC</h2>
@@ -518,7 +523,7 @@ footer{
     </div>
 
     <p class="muted" style="margin:0 0 10px">
-      Outil GUI Windows (PowerShell/WinForms) pensé pour améliorer la stabilité et les performances sur FiveM,
+      Outil GUI Windows pensé pour améliorer la stabilité et les performances sur FiveM,
       avec vérifications système, profils, backups et restauration.
     </p>
 
@@ -625,7 +630,6 @@ const OFFERS=[
 function openDiscord(){window.open("https://discord.gg/mnsopti","_blank")}
 function scrollToTickets(){document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"})}
 
-/* Toast */
 function toast(msg, ms=2400){
   const host=document.getElementById("toastHost");
   const t=document.createElement("div");
@@ -640,7 +644,6 @@ function toast(msg, ms=2400){
   setTimeout(close, ms);
 }
 
-/* Anti injection */
 function escapeHtml(str){
   return String(str)
     .replaceAll("&","&amp;")
@@ -652,12 +655,7 @@ function escapeHtml(str){
 
 /* Autosave brouillon */
 function saveDraft(){
-  const draft={
-    pseudo: pseudo.value,
-    contact: contact.value,
-    subject: subject.value,
-    details: details.value
-  };
+  const draft={ pseudo: pseudo.value, contact: contact.value, subject: subject.value, details: details.value };
   localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
   const hint=document.getElementById("draftHint");
   hint.style.display="block";
@@ -677,10 +675,7 @@ function loadDraft(){
 function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
 
 let draftTimer=null;
-function draftTouch(){
-  clearTimeout(draftTimer);
-  draftTimer=setTimeout(saveDraft, 250);
-}
+function draftTouch(){ clearTimeout(draftTimer); draftTimer=setTimeout(saveDraft, 250); }
 
 /* Boutique */
 function renderShop(){
@@ -710,26 +705,13 @@ Pseudo Discord :`;
 }
 
 /* Tickets */
-function loadTickets(){
- try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{return[]}
-}
-function saveTickets(list){
- localStorage.setItem(STORAGE_KEY,JSON.stringify(list));
- renderTickets();
-}
-function clearTickets(){
- localStorage.removeItem(STORAGE_KEY);
- renderTickets();
- toast("🧹 Tickets locaux supprimés.");
-}
+function loadTickets(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{return[]} }
+function saveTickets(list){ localStorage.setItem(STORAGE_KEY,JSON.stringify(list)); renderTickets(); }
+function clearTickets(){ localStorage.removeItem(STORAGE_KEY); renderTickets(); toast("🧹 Tickets locaux supprimés."); }
 
 async function copyText(txt){
- try{
-  await navigator.clipboard.writeText(txt);
-  toast("✅ Copié dans le presse-papiers");
- }catch{
-  toast("❌ Impossible de copier");
- }
+ try{ await navigator.clipboard.writeText(txt); toast("✅ Copié dans le presse-papiers"); }
+ catch{ toast("❌ Impossible de copier"); }
 }
 
 function renderTickets(){
@@ -767,11 +749,8 @@ async function checkApi(){
  try{
   const r=await fetch(API_URL+"/status",{cache:"no-store"});
   const j=await r.json();
-  if(j.online&&j.botReady){
-    el.innerHTML='<span class="statusDot statusOk"></span>API prête';
-  }else{
-    el.innerHTML='<span class="statusDot statusWarn"></span>API en ligne';
-  }
+  if(j.online&&j.botReady) el.innerHTML='<span class="statusDot statusOk"></span>API prête';
+  else el.innerHTML='<span class="statusDot statusWarn"></span>API en ligne';
  }catch{
   el.innerHTML='<span class="statusDot statusBad"></span>API inaccessible';
  }
@@ -803,18 +782,10 @@ document.getElementById("ticketForm").addEventListener("submit",async e=>{
   const j=await r.json();
   if(r.ok&&j.ok){
    const list=loadTickets();
-   list.unshift({
-    id:j.id,
-    subject:data.subject,
-    details:data.details,
-    createdAt:Date.now(),
-    channelUrl:j.channelUrl||""
-   });
+   list.unshift({ id:j.id, subject:data.subject, details:data.details, createdAt:Date.now(), channelUrl:j.channelUrl||"" });
    saveTickets(list);
-
    toast("✅ Ticket créé !");
    if(j.channelUrl) window.open(j.channelUrl,"_blank");
-
    ticketForm.reset();
    clearDraft();
   }else{
