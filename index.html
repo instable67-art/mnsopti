@@ -4,56 +4,417 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MNS OPTI</title>
+
   <style>
     :root{
-      --bg:#050505; --card:#0d0d0d; --stroke:#2b2b2b;
-      --text:#fff; --muted:#b9b9b9; --accent:#fff; --radius:16px;
+      --bg:#050505;
+      --card:#0d0d0d;
+      --stroke:#2b2b2b;
+      --text:#ffffff;
+      --muted:#b9b9b9;
+      --accent:#ffffff;
+
+      --radius:18px;
+      --shadow: 0 24px 80px rgba(0,0,0,0.55);
+      --shadowSoft: 0 16px 50px rgba(0,0,0,0.45);
     }
+
     *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(1200px 600px at 50% 0%, rgba(255,255,255,.06), transparent 60%), var(--bg);color:var(--text);}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 50% 0%, rgba(255,255,255,0.08), transparent 60%),
+        radial-gradient(900px 450px at 10% 20%, rgba(255,255,255,0.04), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
     .wrap{max-width:1100px;margin:0 auto;padding:24px}
-    header{padding:44px 0 22px;text-align:center}
-    .title{margin:26px 0 6px;font-size:56px;letter-spacing:2px}
-    .subtitle{margin:0 0 6px;color:var(--muted);font-size:16px}
-    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:26px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}.title{font-size:42px}}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));border:1px solid var(--stroke);border-radius:var(--radius);padding:18px}
-    h2{margin:0 0 12px;font-size:20px}
+
+    /* ===== Header Pro ===== */
+    header{
+      padding:34px 0 18px;
+      text-align:center;
+      position:relative;
+    }
+
+    .hero{
+      position:relative;
+      width:100%;
+      max-width:1000px;
+      margin:0 auto;
+      border-radius:24px;
+      overflow:hidden;
+      border:1px solid var(--stroke);
+      background: #080808;
+      box-shadow: var(--shadow);
+      transform: translateZ(0);
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(800px 300px at 20% 20%, rgba(255,255,255,0.12), transparent 55%),
+        radial-gradient(700px 260px at 80% 35%, rgba(255,255,255,0.06), transparent 55%);
+      pointer-events:none;
+      opacity:.9;
+      mix-blend-mode: screen;
+    }
+
+    .bannerBtn{
+      all:unset;
+      display:block;
+      cursor:pointer;
+      width:100%;
+      position:relative;
+    }
+
+    .bannerImg{
+      width:100%;
+      display:block;
+      height:auto;
+      transform: scale(1.01);
+      filter: contrast(1.05) brightness(1.02);
+      transition: transform 600ms ease, filter 600ms ease;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    .hero:hover .bannerImg{
+      transform: scale(1.03);
+      filter: contrast(1.08) brightness(1.05);
+    }
+
+    .heroOverlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      padding:18px 18px 16px;
+      gap:14px;
+      pointer-events:none;
+      background: linear-gradient(180deg, rgba(0,0,0,0.0) 45%, rgba(0,0,0,0.55) 100%);
+    }
+
+    .brandRow{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      pointer-events:auto;
+    }
+
+    .logoBtn{
+      all:unset;
+      cursor:pointer;
+      width:76px;
+      height:76px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.25);
+      box-shadow: 0 12px 45px rgba(0,0,0,0.55);
+      display:grid;
+      place-items:center;
+      backdrop-filter: blur(8px);
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+      position:relative;
+    }
+
+    .logoBtn:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.25);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.65);
+    }
+
+    .logoImg{
+      width:54px;
+      height:54px;
+      object-fit:contain;
+      user-select:none;
+      -webkit-user-drag:none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.65));
+      transition: transform 220ms ease;
+    }
+
+    .titleBlock{
+      text-align:left;
+      pointer-events:none;
+    }
+
+    .title{
+      margin:0;
+      font-size:30px;
+      letter-spacing:1.2px;
+      line-height:1.05;
+    }
+    .subtitle{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .quickActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      pointer-events:auto;
+      justify-content:flex-end;
+    }
+
+    /* ===== Layout ===== */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:18px;
+      margin-top:18px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .heroOverlay{flex-direction:column;align-items:flex-start}
+      .quickActions{justify-content:flex-start}
+      .logoBtn{width:70px;height:70px}
+      .logoImg{width:50px;height:50px}
+      .title{font-size:26px}
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding:18px;
+      box-shadow: var(--shadowSoft);
+    }
+
+    h2{margin:0 0 12px;font-size:18px;letter-spacing:0.2px}
     .muted{color:var(--muted);font-size:14px}
-    .shopItem{display:flex;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--stroke);border-radius:14px;background:rgba(0,0,0,.25);margin:10px 0}
-    .pill{border:1px solid var(--stroke);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
-    button{appearance:none;border:none;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer;background:var(--accent);color:#000}
-    button:hover{opacity:.9}
-    button:disabled{opacity:.5;cursor:not-allowed}
+
+    .shopItem{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 14px;
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      background: rgba(0,0,0,0.28);
+      margin:10px 0;
+      transition: transform 220ms ease, border-color 220ms ease;
+    }
+    .shopItem:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.16);
+    }
+    .shopItem b{font-size:15px}
+    .pill{
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      border-radius:12px;
+      padding:12px 14px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--accent);
+      color:#000;
+      transition: transform 120ms ease, opacity 160ms ease;
+    }
+    button:hover{opacity:0.92}
+    button:active{transform: translateY(1px)}
+    button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
     .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .btnGhost{background:transparent;color:#fff;border:1px solid var(--stroke);font-weight:600}
+    .btnGhost{
+      background:transparent;
+      color:#fff;
+      border:1px solid var(--stroke);
+      font-weight:700;
+    }
+
     label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
-    input,textarea{width:100%;margin-top:8px;padding:12px;border-radius:12px;border:1px solid var(--stroke);background:rgba(0,0,0,.25);color:#fff;outline:none}
+    input, textarea{
+      width:100%;
+      margin-top:8px;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,0.28);
+      color:#fff;
+      outline:none;
+      transition: border-color 160ms ease, transform 120ms ease;
+    }
+    input:focus, textarea:focus{
+      border-color: rgba(255,255,255,0.22);
+    }
     textarea{min-height:110px;resize:vertical}
-    .ticketsList{margin-top:10px;display:flex;flex-direction:column;gap:10px}
-    .ticketBox{border:1px solid var(--stroke);background:rgba(0,0,0,.25);border-radius:14px;padding:12px}
-    .ticketTop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+    .ticketsList{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .ticketBox{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,0.28);
+      border-radius:14px;
+      padding:12px;
+    }
+    .ticketTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
     .ticketId{font-size:13px;color:var(--muted)}
-    .ticketMsg{margin:10px 0 0;color:#fff;font-size:14px;white-space:pre-wrap;word-break:break-word}
-    footer{margin:28px 0 10px;padding:18px 0 0;border-top:1px solid var(--stroke);text-align:center;color:var(--muted);font-size:13px}
+    .ticketMsg{
+      margin:10px 0 0;
+      color:#fff;
+      font-size:14px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    footer{
+      margin:28px 0 10px;
+      padding:18px 0 0;
+      border-top:1px solid var(--stroke);
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+    }
     a{color:#fff}
+
+    /* ===== Animations ===== */
+
+    /* Logo click: pulse + rotate + glow */
+    @keyframes logoClick {
+      0%   { transform: translateY(0) rotate(0deg) scale(1); box-shadow: 0 12px 45px rgba(0,0,0,0.55); }
+      35%  { transform: translateY(-2px) rotate(-6deg) scale(1.06); box-shadow: 0 0 0 10px rgba(255,255,255,0.06), 0 18px 80px rgba(0,0,0,0.7); }
+      70%  { transform: translateY(-1px) rotate(6deg) scale(1.04);  box-shadow: 0 0 0 18px rgba(255,255,255,0.03), 0 16px 70px rgba(0,0,0,0.68); }
+      100% { transform: translateY(0) rotate(0deg) scale(1); box-shadow: 0 12px 45px rgba(0,0,0,0.55); }
+    }
+    @keyframes logoInner {
+      0%   { transform: rotate(0deg) scale(1); }
+      50%  { transform: rotate(18deg) scale(1.06); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    .logoBtn.anim {
+      animation: logoClick 720ms cubic-bezier(.2,.8,.2,1);
+      border-color: rgba(255,255,255,0.28);
+    }
+    .logoBtn.anim .logoImg{
+      animation: logoInner 720ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    /* Banner click: shimmer + tilt */
+    @keyframes bannerFlash {
+      0%   { transform: rotate(0deg) scale(1); }
+      40%  { transform: rotate(-0.3deg) scale(1.01); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    .hero.anim {
+      animation: bannerFlash 650ms cubic-bezier(.2,.8,.2,1);
+    }
+    .shimmer{
+      position:absolute;
+      inset:-30%;
+      background: linear-gradient(120deg,
+        transparent 0%,
+        rgba(255,255,255,0.05) 35%,
+        rgba(255,255,255,0.18) 50%,
+        rgba(255,255,255,0.05) 65%,
+        transparent 100%);
+      transform: translateX(-70%) rotate(10deg);
+      opacity:0;
+      pointer-events:none;
+    }
+    .hero.anim .shimmer{
+      opacity:1;
+      animation: shimmerMove 800ms ease;
+    }
+    @keyframes shimmerMove{
+      0%{ transform: translateX(-80%) rotate(10deg); }
+      100%{ transform: translateX(80%) rotate(10deg); }
+    }
+
+    /* little status dot */
+    .statusDot{
+      display:inline-block;
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,0.25);
+      margin-right:8px;
+      vertical-align:middle;
+    }
+    .statusOk{ background: rgba(255,255,255,0.95); }
+    .statusWarn{ background: rgba(255,255,255,0.55); }
+    .statusBad{ background: rgba(255,255,255,0.18); }
   </style>
 </head>
+
 <body>
   <div class="wrap">
+
     <header>
-      <div class="title">MNS OPTI</div>
-      <p class="subtitle">Boutique + Tickets → Discord</p>
+      <div class="hero" id="hero">
+        <div class="shimmer"></div>
+
+        <!-- Bannière cliquable -->
+        <button class="bannerBtn" id="bannerBtn" type="button" aria-label="Bannière MNS OPTI">
+          <img class="bannerImg" src="banner.png" alt="MNS OPTI Banner"
+               onerror="this.style.display='none'; this.closest('.hero').style.padding='26px'; this.closest('.hero').innerHTML='<div style=&quot;color:#fff;font-weight:800;font-size:22px;text-align:center;padding:22px;&quot;>MNS OPTI</div><div style=&quot;color:#b9b9b9;text-align:center;padding-bottom:22px;&quot;>Ajoute <b>banner.png</b> dans le repo</div>';"/>
+        </button>
+
+        <div class="heroOverlay">
+          <div class="brandRow">
+            <!-- Logo cliquable -->
+            <button class="logoBtn" id="logoBtn" type="button" aria-label="Logo MNS OPTI">
+              <img class="logoImg" src="logo.png" alt="MNS OPTI Logo"
+                   onerror="this.style.display='none'; this.parentElement.textContent='M'; this.parentElement.style.fontWeight='900'; this.parentElement.style.fontSize='28px';"/>
+            </button>
+
+            <div class="titleBlock">
+              <h1 class="title">MNS OPTI</h1>
+              <p class="subtitle">Boutique + Tickets → Discord</p>
+            </div>
+          </div>
+
+          <div class="quickActions">
+            <button type="button" class="btnGhost" id="goDiscordTop">Discord</button>
+            <button type="button" id="goTicketsTop">Créer un ticket</button>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="grid">
       <div class="card">
         <h2>🛒 Boutique – MNS NIC</h2>
 
-        <div class="shopItem"><div><b>1 semaine</b> <span class="pill">Accès</span></div><div><b>6€</b></div></div>
-        <div class="shopItem"><div><b>1 mois</b> <span class="pill">Accès</span></div><div><b>12€</b></div></div>
-        <div class="shopItem"><div><b>3 mois</b> <span class="pill">Accès</span></div><div><b>24€</b></div></div>
-        <div class="shopItem"><div><b>1 an</b> <span class="pill">Accès</span></div><div><b>45€</b></div></div>
+        <div class="shopItem">
+          <div><b>1 semaine</b> <span class="pill">Accès</span></div>
+          <div><b>6€</b></div>
+        </div>
+        <div class="shopItem">
+          <div><b>1 mois</b> <span class="pill">Accès</span></div>
+          <div><b>12€</b></div>
+        </div>
+        <div class="shopItem">
+          <div><b>3 mois</b> <span class="pill">Accès</span></div>
+          <div><b>24€</b></div>
+        </div>
+        <div class="shopItem">
+          <div><b>1 an</b> <span class="pill">Accès</span></div>
+          <div><b>45€</b></div>
+        </div>
 
         <p class="muted">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
 
@@ -62,12 +423,15 @@
           <button type="button" class="btnGhost" id="ticketBtn">Créer un ticket</button>
         </div>
 
-        <div class="muted" id="apiState" style="margin-top:12px;">⏳ Vérification API…</div>
+        <div class="muted" id="apiState" style="margin-top:12px;">
+          <span class="statusDot"></span>⏳ Vérification API…
+        </div>
       </div>
 
       <div class="card">
         <h2>📌 Mes tickets (local)</h2>
         <p class="muted">Ils sont enregistrés dans ton navigateur.</p>
+
         <div id="ticketsList" class="ticketsList"></div>
 
         <div class="btnRow">
@@ -113,16 +477,22 @@
     // =============================
     // CONFIG
     // =============================
-    const API_URL = "https://mnsopti-bot.onrender.com";
-    const STORAGE_KEY = "mnsopti_tickets_v4";
+    const API_URL = "https://mnsopti-bot.onrender.com"; // <-- change si ton Render a une autre URL
+    const STORAGE_KEY = "mnsopti_tickets_v5";
 
     // =============================
-    // Utils
+    // Helpers
     // =============================
     const $ = (id) => document.getElementById(id);
+    const openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
+    const scrollToTickets = () => $("ticketsSection")?.scrollIntoView({ behavior:"smooth" });
+
     const esc = (s) => String(s ?? "")
-      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
 
     function loadTickets(){
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
@@ -131,14 +501,6 @@
     function saveTickets(list){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
       renderTickets();
-    }
-
-    function scrollToTickets(){
-      $("ticketsSection")?.scrollIntoView({ behavior:"smooth" });
-    }
-
-    function openDiscord(){
-      window.open("https://discord.gg/mnsopti", "_blank");
     }
 
     function renderTickets(){
@@ -171,22 +533,60 @@
       `).join("");
     }
 
+    // =============================
+    // API Status
+    // =============================
     async function checkApi(){
       const el = $("apiState");
       if(!el) return;
+
+      const dot = el.querySelector(".statusDot");
+      const setDot = (cls) => {
+        if(!dot) return;
+        dot.className = "statusDot " + cls;
+      };
+
       try{
         const r = await fetch(API_URL + "/status", { cache:"no-store" });
         const j = await r.json().catch(()=> ({}));
-        el.textContent = (j.online === true)
-          ? (j.botReady ? "✅ API en ligne (bot prêt)" : "⚠️ API en ligne (bot pas prêt)")
-          : "❌ API inaccessible";
+        if(j.online === true && j.botReady === true){
+          setDot("statusOk");
+          el.innerHTML = '<span class="statusDot statusOk"></span>✅ API en ligne (bot prêt)';
+        } else if (j.online === true){
+          setDot("statusWarn");
+          el.innerHTML = '<span class="statusDot statusWarn"></span>⚠️ API en ligne (bot pas prêt)';
+        } else {
+          setDot("statusBad");
+          el.innerHTML = '<span class="statusDot statusBad"></span>❌ API inaccessible';
+        }
       }catch{
-        el.textContent = "❌ API inaccessible";
+        setDot("statusBad");
+        el.innerHTML = '<span class="statusDot statusBad"></span>❌ API inaccessible';
       }
     }
 
     // =============================
-    // Init UI
+    // Animations (click)
+    // =============================
+    function playAnim(el, cls){
+      el.classList.remove(cls);
+      // force reflow
+      void el.offsetWidth;
+      el.classList.add(cls);
+      el.addEventListener("animationend", () => el.classList.remove(cls), { once:true });
+    }
+
+    $("logoBtn").addEventListener("click", () => {
+      playAnim($("logoBtn"), "anim");
+      // petit easter: ouvre discord si double click
+    });
+
+    $("bannerBtn").addEventListener("click", () => {
+      playAnim($("hero"), "anim");
+    });
+
+    // =============================
+    // Init buttons
     // =============================
     $("buyBtn").onclick = openDiscord;
     $("ticketBtn").onclick = scrollToTickets;
@@ -194,12 +594,11 @@
     $("clearBtn").onclick = () => { localStorage.removeItem(STORAGE_KEY); renderTickets(); };
     $("resetBtn").onclick = () => $("ticketForm").reset();
 
-    renderTickets();
-    checkApi();
-    setInterval(checkApi, 30000);
+    $("goDiscordTop").onclick = openDiscord;
+    $("goTicketsTop").onclick = scrollToTickets;
 
     // =============================
-    // Submit ticket (ANTI DOUBLON)
+    // Ticket submit (ANTI DOUBLON)
     // =============================
     let isSubmitting = false;
 
@@ -217,7 +616,7 @@
         contact: $("contact").value.trim(),
         subject: $("subject").value.trim(),
         details: $("details").value.trim(),
-        // ✅ clé unique par ticket (anti-doublon serveur)
+        // ✅ clé unique côté serveur (évite 2/3/4 tickets même si retry)
         idempotencyKey: (crypto?.randomUUID ? crypto.randomUUID() : ("k_" + Math.random().toString(36).slice(2) + Date.now()))
       };
 
@@ -257,6 +656,11 @@
         submitBtn.textContent = "Créer le ticket";
       }
     });
+
+    // init
+    renderTickets();
+    checkApi();
+    setInterval(checkApi, 30000);
   </script>
 </body>
 </html>
