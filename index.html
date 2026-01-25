@@ -88,6 +88,7 @@
       color:#000;
     }
     button:hover{opacity:0.9}
+    button:disabled{opacity:0.5;cursor:not-allowed}
     .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .btnGhost{
       background:transparent;
@@ -187,7 +188,7 @@
 
         <div class="btnRow">
           <button type="button" onclick="openDiscord()">Acheter via Discord</button>
-          <button type="remember" class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
+          <button type="button" class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
         </div>
 
         <div class="muted" id="apiState" style="margin-top:12px;">⏳ Vérification API…</div>
@@ -224,7 +225,7 @@
         <textarea id="details" required placeholder="Explique ton souci / ta demande..."></textarea>
 
         <div class="btnRow">
-          <button type="submit">Créer le ticket</button>
+          <button id="submitBtn" type="submit">Créer le ticket</button>
           <button type="button" class="btnGhost" onclick="document.getElementById('ticketForm').reset()">Effacer</button>
         </div>
       </form>
@@ -238,46 +239,115 @@
     </footer>
   </div>
 
+  <!-- ====== UNIQUE SCRIPT (NE PAS DUPLIQUER) ====== -->
   <script>
-    // IMPORTANT : garde exactement cette URL
-    const API_URL = "https://mnsopti-bot.onrender.com";
-    const STORAGE_KEY = "mnsopti_tickets_v1";
+  document.addEventListener("DOMContentLoaded", () => {
+    // ✅ empêche exécution multiple si jamais
+    if (window.__MNS_TICKET_SCRIPT_LOADED__) return;
+    window.__MNS_TICKET_SCRIPT_LOADED__ = true;
 
-    // --- util ---
-    function openDiscord(){ window.open("https://discord.gg/mnsopti","_blank"); }
-    function scrollToTickets(){ document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"}); }
+    const API_URL = "https://mnsopti-bot.onrender.com";
+    const STORAGE_KEY = "mnsopti_tickets_v3";
+
+    // expose onclick
+    window.openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
+    window.scrollToTickets = () => {
+      const el = document.getElementById("ticketsSection");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    };
+    window.openTicketChannel = (url) => { if (url) window.open(url, "_blank"); };
+
     function escapeHtml(s){
-      return String(s)
+      return String(s ?? "")
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
         .replaceAll(">","&gt;")
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
     }
-    function loadTickets(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; } }
-    function saveTickets(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); renderTickets(); }
-    function clearTickets(){ localStorage.removeItem(STORAGE_KEY); renderTickets(); }
-    function removeTicket(id){ saveTickets(loadTickets().filter(t => t.id !== id)); }
+
+    function loadTickets(){
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+      catch { return []; }
+    }
+    function saveTickets(list){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      renderTickets();
+    }
+    window.clearTickets = () => {
+      localStorage.removeItem(STORAGE_KEY);
+      renderTickets();
+    };
+    window.removeTicket = (id) => {
+      saveTickets(loadTickets().filter(t => t.id !== id));
+    };
+
+    function updateTicket(id, patch){
+      const list = loadTickets();
+      const i = list.findIndex(t => t.id === id);
+      if(i === -1) return;
+      list[i] = { ...list[i], ...patch };
+      saveTickets(list);
+    }
+
+    // ✅ bouton fermer (VISIBLE dans Mes tickets)
+    window.closeTicket = async (ticketId) => {
+      const t = loadTickets().find(x => x.id === ticketId);
+      if(!t || t.status === "closed") return;
+      if(!confirm("Fermer ce ticket ?")) return;
+
+      updateTicket(ticketId, { status: "closing" });
+
+      try{
+        const res = await fetch(API_URL + "/api/ticket/close", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ id: ticketId })
+        });
+        const json = await res.json().catch(()=> ({}));
+
+        if(res.ok && json.ok){
+          updateTicket(ticketId, { status: "closed" });
+          alert("✅ Ticket fermé.");
+        } else {
+          updateTicket(ticketId, { status: "open" });
+          alert("❌ Impossible de fermer: " + (json.error || "Erreur"));
+        }
+      }catch{
+        updateTicket(ticketId, { status: "open" });
+        alert("❌ Erreur réseau");
+      }
+    };
 
     function renderTickets(){
-      const list = loadTickets();
       const root = document.getElementById("ticketsList");
       if(!root) return;
+
+      const list = loadTickets();
       if(!list.length){
         root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
         return;
       }
+
       root.innerHTML = list.map(t => `
         <div class="ticketBox">
           <div class="ticketTop">
             <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
-            <div class="ticketId">ID: <b>${escapeHtml(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}</div>
+            <div class="ticketId">
+              ID: <b>${escapeHtml(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}
+              • <b>${escapeHtml(t.status || "open")}</b>
+            </div>
           </div>
+
           <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
           <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${escapeHtml(t.contact || "—")}</div>
+
           <div class="btnRow" style="margin-top:10px;">
-            <button type="button" class="btnGhost" onclick="openDiscord()">Aller sur Discord</button>
-            <button type="button" class="btnGhost" onclick="removeTicket('${t.id}')">Supprimer</button>
+            <button type="button" class="btnGhost" onclick="openTicketChannel('${escapeHtml(t.channelUrl || "")}')">Ouvrir sur Discord</button>
+            <button type="button" class="btnGhost" onclick="closeTicket('${escapeHtml(t.id)}')" ${t.status === "closed" ? "disabled" : ""}>
+              Fermer le ticket
+            </button>
+            <button type="button" class="btnGhost" onclick="removeTicket('${escapeHtml(t.id)}')">Supprimer local</button>
           </div>
         </div>
       `).join("");
@@ -288,596 +358,88 @@
       if(!el) return;
       try{
         const r = await fetch(API_URL + "/status", { cache:"no-store" });
-        const j = await r.json();
-        if(j && j.online === true){
-          el.textContent = j.botReady ? "✅ API en ligne (bot prêt)" : "⚠️ API en ligne (bot pas prêt)";
-        }else{
-          el.textContent = "❌ API inaccessible";
-        }
+        const j = await r.json().catch(()=> ({}));
+        el.textContent = (j.online === true)
+          ? (j.botReady ? "✅ API en ligne (bot prêt)" : "⚠️ API en ligne (bot pas prêt)")
+          : "❌ API inaccessible";
       }catch{
         el.textContent = "❌ API inaccessible";
       }
     }
 
-    // --- init ---
+    // submit anti double
+    const ticketForm = document.getElementById("ticketForm");
+    const submitBtn = document.getElementById("submitBtn");
+    let isSubmitting = false;
+
+    if(ticketForm){
+      ticketForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if(isSubmitting) return;
+        isSubmitting = true;
+
+        if(submitBtn){
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Envoi...";
+        }
+
+        const data = {
+          pseudo: document.getElementById("pseudo")?.value.trim() || "",
+          contact: document.getElementById("contact")?.value.trim() || "",
+          subject: document.getElementById("subject")?.value.trim() || "",
+          details: document.getElementById("details")?.value.trim() || ""
+        };
+
+        try{
+          const res = await fetch(API_URL + "/api/ticket", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(data)
+          });
+
+          const json = await res.json().catch(()=> ({}));
+
+          if(res.ok && json.ok){
+            const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
+            const list = loadTickets();
+            list.unshift({
+              id,
+              subject: data.subject,
+              details: data.details,
+              contact: data.contact,
+              createdAt: Date.now(),
+              status: "open",
+              channelUrl: json.channelUrl || ""
+            });
+            saveTickets(list);
+
+            alert("✅ Ticket créé ! ID: " + id);
+            if(json.channelUrl) window.open(json.channelUrl, "_blank");
+
+            ticketForm.reset();
+            window.scrollToTickets();
+          } else {
+            alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
+          }
+        } catch {
+          alert("❌ Erreur réseau");
+        } finally {
+          isSubmitting = false;
+          if(submitBtn){
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Créer le ticket";
+          }
+        }
+      });
+    }
+
+    // init
     renderTickets();
     checkApi();
     setInterval(checkApi, 30000);
-
-    // --- submit ticket ---
-    const ticketForm = document.getElementById("ticketForm");
-    ticketForm.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-
-      const data = {
-        pseudo: document.getElementById("pseudo").value.trim(),
-        contact: document.getElementById("contact").value.trim(),
-        subject: document.getElementById("subject").value.trim(),
-        details: document.getElementById("details").value.trim()
-      };
-
-      try{
-        const res = await fetch(API_URL + "/api/ticket", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify(data)
-        });
-
-        const json = await res.json().catch(()=> ({}));
-
-        if(res.ok && json.ok){
-          const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
-          const list = loadTickets();
-          list.unshift({
-            id,
-            subject: data.subject,
-            details: data.details,
-            contact: data.contact,
-            createdAt: Date.now()
-          });
-          saveTickets(list);
-
-          alert("✅ Ticket créé ! ID: " + id);
-          if(json.channelUrl) window.open(json.channelUrl, "_blank");
-          ticketForm.reset();
-          scrollToTickets();
-        } else {
-          alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
-        }
-      } catch(err){
-        alert("❌ Erreur réseau (API inaccessible)");
-      }
-    });
+  });
   </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://mnsopti-bot.onrender.com";
-  const STORAGE_KEY = "mnsopti_tickets_v1";
-
-  function openDiscord(){ window.open("https://discord.gg/mnsopti","_blank"); }
-  window.openDiscord = openDiscord;
-
-  function scrollToTickets(){
-    const el = document.getElementById("ticketsSection");
-    if(el) el.scrollIntoView({behavior:"smooth"});
-  }
-  window.scrollToTickets = scrollToTickets;
-
-  function escapeHtml(s){
-    return String(s)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function loadTickets(){
-    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
-    catch{ return []; }
-  }
-  function saveTickets(list){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    renderTickets();
-  }
-  function clearTickets(){
-    localStorage.removeItem(STORAGE_KEY);
-    renderTickets();
-  }
-  window.clearTickets = clearTickets;
-
-  function removeTicket(id){
-    const list = loadTickets().filter(t => t.id !== id);
-    saveTickets(list);
-  }
-  window.removeTicket = removeTicket;
-
-  function renderTickets(){
-    const root = document.getElementById("ticketsList");
-    if(!root) return; // ✅ plus d'écran blanc
-
-    const list = loadTickets();
-    if(!list.length){
-      root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
-      return;
-    }
-
-    root.innerHTML = list.map(t => `
-      <div class="ticketBox">
-        <div class="ticketTop">
-          <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
-          <div class="ticketId">ID: <b>${escapeHtml(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}</div>
-        </div>
-        <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
-        <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${escapeHtml(t.contact || "—")}</div>
-        <div class="btnRow" style="margin-top:10px;">
-          <button type="button" class="btnGhost" onclick="openDiscord()">Aller sur Discord</button>
-          <button type="button" class="btnGhost" onclick="removeTicket('${t.id}')">Supprimer</button>
-        </div>
-      </div>
-    `).join("");
-  }
-
-  async function checkApi(){
-    const el = document.getElementById("apiState");
-    if(!el) return;
-    try{
-      const r = await fetch(API_URL + "/status", { cache:"no-store" });
-      const j = await r.json().catch(()=> ({}));
-      if(j.online === true){
-        el.textContent = j.botReady ? "✅ API en ligne (bot prêt)" : "⚠️ API en ligne (bot pas prêt)";
-      } else {
-        el.textContent = "❌ API inaccessible";
-      }
-    }catch{
-      el.textContent = "❌ API inaccessible";
-    }
-  }
-
-  // Init UI
-  renderTickets();
-  checkApi();
-  setInterval(checkApi, 30000);
-
-  // Form submit
-  const ticketForm = document.getElementById("ticketForm");
-  if(ticketForm){
-    ticketForm.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-
-      const pseudoEl = document.getElementById("pseudo");
-      const contactEl = document.getElementById("contact");
-      const subjectEl = document.getElementById("subject");
-      const detailsEl = document.getElementById("details");
-
-      const data = {
-        pseudo: pseudoEl ? pseudoEl.value.trim() : "",
-        contact: contactEl ? contactEl.value.trim() : "",
-        subject: subjectEl ? subjectEl.value.trim() : "",
-        details: detailsEl ? detailsEl.value.trim() : ""
-      };
-
-      try{
-        const res = await fetch(API_URL + "/api/ticket",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify(data)
-        });
-        const json = await res.json().catch(()=> ({}));
-
-        if(res.ok && json.ok){
-          const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
-          const list = loadTickets();
-          list.unshift({
-            id,
-            subject: data.subject,
-            details: data.details,
-            contact: data.contact,
-            createdAt: Date.now()
-          });
-          saveTickets(list);
-
-          alert("✅ Ticket créé ! ID: " + id);
-          if(json.channelUrl) window.open(json.channelUrl, "_blank");
-
-          ticketForm.reset();
-          scrollToTickets();
-        }else{
-          alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
-        }
-      }catch{
-        alert("❌ Erreur réseau (API inaccessible)");
-      }
-    });
-  }
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://mnsopti-bot.onrender.com";
-  const STORAGE_KEY = "mnsopti_tickets_v2";
-
-  // expose pour les onclick HTML
-  window.openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
-  window.scrollToTickets = () => {
-    const el = document.getElementById("ticketsSection");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
-
-  function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function loadTickets(){
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
-    catch { return []; }
-  }
-  function saveTickets(list){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    renderTickets();
-  }
-  window.clearTickets = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    renderTickets();
-  };
-
-  function updateTicket(id, patch){
-    const list = loadTickets();
-    const idx = list.findIndex(t => t.id === id);
-    if (idx === -1) return;
-    list[idx] = { ...list[idx], ...patch };
-    saveTickets(list);
-  }
-
-  window.removeTicket = (id) => {
-    saveTickets(loadTickets().filter(t => t.id !== id));
-  };
-
-  window.openTicketChannel = (url) => {
-    if (url) window.open(url, "_blank");
-  };
-
-  // Status API
-  async function checkApi(){
-    const el = document.getElementById("apiState");
-    if(!el) return;
-    try{
-      const r = await fetch(API_URL + "/status", { cache:"no-store" });
-      const j = await r.json().catch(()=> ({}));
-      el.textContent = (j.online === true)
-        ? (j.botReady ? "✅ API en ligne (bot prêt)" : "⚠️ API en ligne (bot pas prêt)")
-        : "❌ API inaccessible";
-    }catch{
-      el.textContent = "❌ API inaccessible";
-    }
-  }
-
-  // Render tickets list
-  function renderTickets(){
-    const root = document.getElementById("ticketsList");
-    if(!root) return;
-
-    const list = loadTickets();
-    if(!list.length){
-      root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
-      return;
-    }
-
-    root.innerHTML = list.map(t => `
-      <div class="ticketBox">
-        <div class="ticketTop">
-          <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
-          <div class="ticketId">
-            ID: <b>${escapeHtml(t.id)}</b>
-            • ${new Date(t.createdAt).toLocaleString()}
-            ${t.status ? ` • <b>${escapeHtml(t.status)}</b>` : ""}
-          </div>
-        </div>
-
-        <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
-        <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${escapeHtml(t.contact || "—")}</div>
-
-        <div class="btnRow" style="margin-top:10px;">
-          <button type="button" class="btnGhost" onclick="openTicketChannel('${escapeHtml(t.channelUrl || "")}')">Ouvrir sur Discord</button>
-          <button type="button" class="btnGhost" onclick="closeTicket('${escapeHtml(t.id)}')"
-            ${t.status === "closed" ? "disabled" : ""}>
-            Fermer le ticket
-          </button>
-          <button type="button" class="btnGhost" onclick="removeTicket('${escapeHtml(t.id)}')">Supprimer local</button>
-        </div>
-      </div>
-    `).join("");
-  }
-
-  // Close ticket (calls server)
-  window.closeTicket = async (ticketId) => {
-    const list = loadTickets();
-    const t = list.find(x => x.id === ticketId);
-    if(!t) return;
-
-    if (t.status === "closed") return;
-
-    const ok = confirm("Fermer ce ticket côté Discord ? (Le salon sera verrouillé)");
-    if(!ok) return;
-
-    updateTicket(ticketId, { status: "closing" });
-
-    try{
-      const res = await fetch(API_URL + "/api/ticket/close", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ id: ticketId })
-      });
-      const json = await res.json().catch(()=> ({}));
-
-      if(res.ok && json.ok){
-        updateTicket(ticketId, { status: "closed" });
-        alert("✅ Ticket fermé.");
-      } else {
-        updateTicket(ticketId, { status: "open" });
-        alert("❌ Impossible de fermer: " + (json.error || "Erreur inconnue"));
-      }
-    }catch{
-      updateTicket(ticketId, { status: "open" });
-      alert("❌ Erreur réseau (API inaccessible)");
-    }
-  };
-
-  // Submit ticket (anti double)
-  const ticketForm = document.getElementById("ticketForm");
-  let isSubmitting = false;
-
-  if(ticketForm){
-    ticketForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (isSubmitting) return;
-
-      const submitBtn = ticketForm.querySelector('button[type="submit"]');
-      isSubmitting = true;
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Envoi...";
-      }
-
-      const data = {
-        pseudo: document.getElementById("pseudo")?.value.trim() || "",
-        contact: document.getElementById("contact")?.value.trim() || "",
-        subject: document.getElementById("subject")?.value.trim() || "",
-        details: document.getElementById("details")?.value.trim() || ""
-      };
-
-      try{
-        const res = await fetch(API_URL + "/api/ticket", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify(data)
-        });
-
-        const json = await res.json().catch(()=> ({}));
-
-        if(res.ok && json.ok){
-          const ticketId = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
-          const list = loadTickets();
-          list.unshift({
-            id: ticketId,
-            subject: data.subject,
-            details: data.details,
-            contact: data.contact,
-            createdAt: Date.now(),
-            status: "open",
-            channelUrl: json.channelUrl || ""
-          });
-          saveTickets(list);
-
-          alert("✅ Ticket créé ! ID: " + ticketId);
-          if(json.channelUrl) window.open(json.channelUrl, "_blank");
-
-          ticketForm.reset();
-          window.scrollToTickets();
-        } else {
-          alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
-        }
-      } catch {
-        alert("❌ Erreur réseau (API inaccessible)");
-      } finally {
-        isSubmitting = false;
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Créer le ticket";
-        }
-      }
-    });
-  }
-
-  // Init
-  renderTickets();
-  checkApi();
-  setInterval(checkApi, 30000);
-});
-</script>
-<!-- ===== SCRIPT TICKETS (NE PAS DUPLIQUER) ===== -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // ⛔ empêche exécution multiple (corrige tickets x2/x3)
-  if (window.__MNS_TICKET_SCRIPT_LOADED__) return;
-  window.__MNS_TICKET_SCRIPT_LOADED__ = true;
-
-  const API_URL = "https://mnsopti-bot.onrender.com";
-  const STORAGE_KEY = "mnsopti_tickets_v3";
-
-  window.openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
-  window.scrollToTickets = () => {
-    const el = document.getElementById("ticketsSection");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
-
-  function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function loadTickets(){
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
-    catch { return []; }
-  }
-  function saveTickets(list){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    renderTickets();
-  }
-
-  window.clearTickets = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    renderTickets();
-  };
-  window.removeTicket = (id) => {
-    saveTickets(loadTickets().filter(t => t.id !== id));
-  };
-  window.openTicketChannel = (url) => {
-    if (url) window.open(url, "_blank");
-  };
-
-  function updateTicket(id, patch){
-    const list = loadTickets();
-    const i = list.findIndex(t => t.id === id);
-    if(i === -1) return;
-    list[i] = { ...list[i], ...patch };
-    saveTickets(list);
-  }
-
-  window.closeTicket = async (ticketId) => {
-    const t = loadTickets().find(x => x.id === ticketId);
-    if(!t || t.status === "closed") return;
-    if(!confirm("Fermer ce ticket ?")) return;
-
-    updateTicket(ticketId, { status: "closing" });
-    try{
-      const res = await fetch(API_URL + "/api/ticket/close", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ id: ticketId })
-      });
-      const json = await res.json().catch(()=> ({}));
-      if(res.ok && json.ok){
-        updateTicket(ticketId, { status: "closed" });
-        alert("✅ Ticket fermé.");
-      } else {
-        updateTicket(ticketId, { status: "open" });
-        alert("❌ " + (json.error || "Erreur"));
-      }
-    }catch{
-      updateTicket(ticketId, { status: "open" });
-      alert("❌ Erreur réseau");
-    }
-  };
-
-  function renderTickets(){
-    const root = document.getElementById("ticketsList");
-    if(!root) return;
-    const list = loadTickets();
-    if(!list.length){
-      root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
-      return;
-    }
-    root.innerHTML = list.map(t => `
-      <div class="ticketBox">
-        <div class="ticketTop">
-          <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
-          <div class="ticketId">
-            ID: <b>${escapeHtml(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}
-            • <b>${escapeHtml(t.status || "open")}</b>
-          </div>
-        </div>
-        <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
-        <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">
-          Contact: ${escapeHtml(t.contact || "—")}
-        </div>
-        <div class="btnRow" style="margin-top:10px;">
-          <button type="button" class="btnGhost"
-            onclick="openTicketChannel('${escapeHtml(t.channelUrl || "")}')">
-            Ouvrir sur Discord
-          </button>
-          <button type="button" class="btnGhost"
-            onclick="closeTicket('${escapeHtml(t.id)}')"
-            ${t.status === "closed" ? "disabled" : ""}>
-            Fermer le ticket
-          </button>
-          <button type="button" class="btnGhost"
-            onclick="removeTicket('${escapeHtml(t.id)}')">
-            Supprimer local
-          </button>
-        </div>
-      </div>
-    `).join("");
-  }
-
-  const ticketForm = document.getElementById("ticketForm");
-  let isSubmitting = false;
-
-  if(ticketForm){
-    ticketForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if(isSubmitting) return;
-      isSubmitting = true;
-
-      const btn = ticketForm.querySelector('button[type="submit"]');
-      if(btn){ btn.disabled = true; btn.textContent = "Envoi..."; }
-
-      const data = {
-        pseudo: document.getElementById("pseudo")?.value.trim() || "",
-        contact: document.getElementById("contact")?.value.trim() || "",
-        subject: document.getElementById("subject")?.value.trim() || "",
-        details: document.getElementById("details")?.value.trim() || ""
-      };
-
-      try{
-        const res = await fetch(API_URL + "/api/ticket", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify(data)
-        });
-        const json = await res.json().catch(()=> ({}));
-        if(res.ok && json.ok){
-          const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
-          const list = loadTickets();
-          list.unshift({
-            id,
-            subject: data.subject,
-            details: data.details,
-            contact: data.contact,
-            createdAt: Date.now(),
-            status: "open",
-            channelUrl: json.channelUrl || ""
-          });
-          saveTickets(list);
-          alert("✅ Ticket créé ! ID: " + id);
-          if(json.channelUrl) window.open(json.channelUrl, "_blank");
-          ticketForm.reset();
-          window.scrollToTickets();
-        } else {
-          alert("❌ " + (json.error || "Erreur"));
-        }
-      } catch {
-        alert("❌ Erreur réseau");
-      } finally {
-        isSubmitting = false;
-        if(btn){ btn.disabled = false; btn.textContent = "Créer le ticket"; }
-      }
-    });
-  }
-
-  renderTickets();
-});
-</script>
-<!-- ===== FIN SCRIPT TICKETS ===== -->
+  <!-- ====== FIN UNIQUE SCRIPT ====== -->
 
 </body>
 </html>
