@@ -25,7 +25,7 @@ body{
     var(--bg);
   color:var(--text);
 }
-
+a{color:#fff}
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
 
 /* ===== TOP BAR ===== */
@@ -34,9 +34,8 @@ body{
   align-items:center;
   justify-content:space-between;
   gap:16px;
-  margin-bottom:22px;
+  margin-bottom:18px;
 }
-
 .logoBtn{
   width:70px;height:70px;
   border-radius:16px;
@@ -45,9 +44,11 @@ body{
   display:grid;place-items:center;
   cursor:pointer;
   transition:transform .25s ease, box-shadow .25s ease;
+  user-select:none;
 }
-.logoBtn:active{transform:scale(1.1) rotate(8deg)}
-.logoImg{width:48px}
+.logoBtn:hover{transform:translateY(-2px)}
+.logoBtn:active{transform:scale(1.08) rotate(8deg)}
+.logoImg{width:48px;height:48px;object-fit:contain}
 
 .bannerBtn{
   max-width:420px;
@@ -56,6 +57,7 @@ body{
   overflow:hidden;
   border:1px solid var(--stroke);
   cursor:pointer;
+  user-select:none;
 }
 .bannerImg{
   width:100%;
@@ -63,11 +65,12 @@ body{
   transition:transform .6s ease;
 }
 .bannerBtn:hover .bannerImg{transform:scale(1.05)}
+.bannerBtn:active .bannerImg{transform:scale(1.02)}
 
 /* ===== TITRE ===== */
 .headerText{
   text-align:center;
-  margin-bottom:26px;
+  margin-bottom:22px;
 }
 .headerText h1{
   margin:0;
@@ -87,7 +90,8 @@ body{
 }
 @media(max-width:900px){
   .grid{grid-template-columns:1fr}
-  .topbar{flex-direction:column}
+  .topbar{flex-direction:column;align-items:stretch}
+  .bannerBtn{max-width:100%}
 }
 
 /* ===== CARDS ===== */
@@ -106,13 +110,14 @@ h2{margin:0 0 12px;font-size:18px}
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:12px;
   padding:14px;
   border:1px solid var(--stroke);
   border-radius:14px;
   background:rgba(0,0,0,.25);
-  transition:transform .2s ease;
+  transition:transform .2s ease, border-color .2s ease;
 }
-.shopItem:hover{transform:translateY(-2px)}
+.shopItem:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.16)}
 .pill{
   border:1px solid var(--stroke);
   border-radius:999px;
@@ -120,9 +125,8 @@ h2{margin:0 0 12px;font-size:18px}
   font-size:12px;
   color:var(--muted);
 }
-.price{font-weight:900}
-
-.shopActions{display:flex;gap:10px}
+.price{font-weight:900;white-space:nowrap}
+.shopActions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
 /* ===== BUTTONS ===== */
 button{
@@ -134,6 +138,7 @@ button{
   background:var(--accent);
   color:#000;
 }
+button:disabled{opacity:.5;cursor:not-allowed}
 .btnGhost{
   background:transparent;
   color:#fff;
@@ -150,6 +155,25 @@ input,textarea{
 }
 textarea{min-height:110px}
 
+/* ===== TICKETS LIST ===== */
+.ticketsList{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.ticketBox{border:1px solid var(--stroke);background:rgba(0,0,0,.25);border-radius:14px;padding:12px}
+.ticketTop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ticketId{font-size:13px;color:var(--muted)}
+.ticketMsg{margin:10px 0 0;font-size:14px;white-space:pre-wrap;word-break:break-word}
+
+/* ===== API STATE ===== */
+.statusDot{
+  display:inline-block;
+  width:8px;height:8px;border-radius:999px;
+  background: rgba(255,255,255,0.25);
+  margin-right:8px;
+  vertical-align:middle;
+}
+.statusOk{ background: rgba(255,255,255,0.95); }
+.statusWarn{ background: rgba(255,255,255,0.55); }
+.statusBad{ background: rgba(255,255,255,0.18); }
+
 /* ===== FOOTER ===== */
 footer{
   margin:28px 0 10px;
@@ -165,119 +189,291 @@ footer{
 <body>
 <div class="wrap">
 
-<!-- ===== TOP BAR ===== -->
-<div class="topbar">
-  <!-- LOGO GAUCHE -->
-  <div class="logoBtn" id="logoBtn">
-    <img src="logo.png" class="logoImg" alt="Logo">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logoBtn" id="logoBtn" title="Logo">
+      <img src="logo.png" class="logoImg" alt="Logo"
+           onerror="this.style.display='none'; this.parentElement.textContent='M'; this.parentElement.style.fontSize='28px'; this.parentElement.style.fontWeight='900';">
+    </div>
+
+    <div class="bannerBtn" id="bannerBtn" title="Bannière">
+      <img src="banner.png" class="bannerImg" alt="Banner"
+           onerror="this.style.display='none'; this.parentElement.style.padding='16px'; this.parentElement.innerHTML='<div style=&quot;color:#b9b9b9;text-align:center&quot;>Ajoute <b>banner.png</b> dans le repo</div>';">
+    </div>
   </div>
 
-  <!-- BANNIÈRE DROITE (RÉDUITE) -->
-  <div class="bannerBtn" id="bannerBtn">
-    <img src="banner.png" class="bannerImg" alt="Banner">
+  <div class="headerText">
+    <h1>MNS OPTI</h1>
+    <p>Boutique + Tickets → Discord</p>
   </div>
-</div>
 
-<!-- ===== TITRE ===== -->
-<div class="headerText">
-  <h1>MNS OPTI</h1>
-  <p>Boutique + Tickets → Discord</p>
-</div>
+  <div class="grid">
 
-<div class="grid">
+    <!-- SHOP -->
+    <div class="card">
+      <h2>🛒 Boutique – MNS NIC</h2>
+      <p class="muted">Clique sur “Acheter” pour pré-remplir le ticket.</p>
 
-<!-- ===== SHOP ===== -->
-<div class="card">
-<h2>🛒 Boutique – MNS NIC</h2>
-<p class="muted">Clique sur une offre pour pré-remplir le ticket</p>
+      <div id="shopList" class="shopList"></div>
 
-<div id="shopList" class="shopList"></div>
+      <p class="muted" style="margin-top:12px;">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
 
-<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-  <button onclick="openDiscord()">Acheter via Discord</button>
-  <button class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
-</div>
-</div>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button type="button" id="buyDiscordBtn">Acheter via Discord</button>
+        <button type="button" class="btnGhost" id="goTicketBtn">Créer un ticket</button>
+      </div>
 
-<!-- ===== TICKETS ===== -->
-<div class="card">
-<h2>📌 Mes tickets</h2>
-<p class="muted">Stockés dans ton navigateur</p>
-<div id="ticketsList" class="muted">Aucun ticket</div>
-</div>
+      <div class="muted" id="apiState" style="margin-top:12px;">
+        <span class="statusDot"></span>⏳ Vérification API…
+      </div>
+    </div>
 
-</div>
+    <!-- LOCAL TICKETS -->
+    <div class="card">
+      <h2>📌 Mes tickets (local)</h2>
+      <p class="muted">Ils sont enregistrés dans ton navigateur.</p>
 
-<!-- ===== CREATE TICKET ===== -->
-<div class="card" id="ticketsSection" style="margin-top:18px;">
-<h2>🎫 Créer un ticket</h2>
+      <div id="ticketsList" class="ticketsList"></div>
 
-<form id="ticketForm">
-<label>Pseudo</label>
-<input id="pseudo" required>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button type="button" class="btnGhost" id="discordBtn">Aller sur Discord</button>
+        <button type="button" class="btnGhost" id="clearBtn">Tout supprimer</button>
+      </div>
+    </div>
 
-<label>Contact</label>
-<input id="contact">
+  </div>
 
-<label>Sujet</label>
-<input id="subject" required>
+  <!-- CREATE TICKET -->
+  <div class="card" id="ticketsSection" style="margin-top:18px;">
+    <h2>🎫 Créer un ticket</h2>
+    <p class="muted">Ton message est envoyé au bot Discord via Render.</p>
 
-<label>Détails</label>
-<textarea id="details" required></textarea>
+    <form id="ticketForm">
+      <label>Pseudo</label>
+      <input id="pseudo" required placeholder="Ton pseudo" />
 
-<div style="margin-top:12px">
-<button type="submit">Créer le ticket</button>
-</div>
-</form>
-</div>
+      <label>Contact (optionnel)</label>
+      <input id="contact" placeholder="email / discord / etc" />
 
-<footer>
-Discord : <a href="https://discord.gg/mnsopti">discord.gg/mnsopti</a><br>
-© 2026 MNS OPTI
-</footer>
+      <label>Sujet</label>
+      <input id="subject" required placeholder="Ex: Achat, problème, question..." />
+
+      <label>Détails</label>
+      <textarea id="details" required placeholder="Explique ta demande..."></textarea>
+
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="submitBtn" type="submit">Créer le ticket</button>
+        <button type="button" class="btnGhost" id="resetBtn">Effacer</button>
+      </div>
+    </form>
+  </div>
+
+  <footer>
+    Discord : <a href="https://discord.gg/mnsopti" target="_blank" rel="noreferrer">discord.gg/mnsopti</a><br>
+    © 2026 MNS OPTI
+  </footer>
 
 </div>
 
 <script>
-const API_URL="https://mnsopti-bot.onrender.com";
-const OFFERS=[
- {id:"week",label:"1 semaine",price:5},
- {id:"month",label:"1 mois",price:10},
- {id:"3months",label:"3 mois",price:15},
- {id:"lifetime",label:"Lifetime",price:25},
-];
+  // =============================
+  // CONFIG
+  // =============================
+  const API_URL = "https://mnsopti-bot.onrender.com"; // <-- mets ton URL Render ici si différente
+  const STORAGE_KEY = "mnsopti_tickets_v7";
 
-function openDiscord(){window.open("https://discord.gg/mnsopti","_blank")}
-function scrollToTickets(){document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"})}
+  // PRIX DYNAMIQUES
+  const OFFERS = [
+    {id:"week", label:"1 semaine", price:5},
+    {id:"month", label:"1 mois", price:10},
+    {id:"3months", label:"3 mois", price:15},
+    {id:"lifetime", label:"Lifetime", price:25},
+  ];
 
-function renderShop(){
- const root=document.getElementById("shopList");
- root.innerHTML=OFFERS.map(o=>`
-  <div class="shopItem">
-    <div>
-      <b>${o.label}</b> <span class="pill">Accès</span>
-    </div>
-    <div class="shopActions">
-      <div class="price">${o.price} €</div>
-      <button class="btnSmall" onclick="buyOffer('${o.id}')">Acheter</button>
-    </div>
-  </div>
- `).join("");
-}
+  // =============================
+  // Helpers
+  // =============================
+  const $ = (id) => document.getElementById(id);
+  const openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
+  const scrollToTickets = () => $("ticketsSection")?.scrollIntoView({behavior:"smooth"});
 
-function buyOffer(id){
- const o=OFFERS.find(x=>x.id===id);
- document.getElementById("subject").value=`Achat - ${o.label} (${o.price} €)`;
- document.getElementById("details").value=
+  const esc = (s) => String(s ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+
+  function loadTickets(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+    catch { return []; }
+  }
+  function saveTickets(list){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    renderTickets();
+  }
+
+  // =============================
+  // Shop render + buy per product
+  // =============================
+  function renderShop(){
+    const root = $("shopList");
+    root.innerHTML = OFFERS.map(o => `
+      <div class="shopItem">
+        <div>
+          <b>${esc(o.label)}</b> <span class="pill">Accès</span>
+          <div class="muted" style="font-size:12px;margin-top:4px;">Support + activation rapide</div>
+        </div>
+        <div class="shopActions">
+          <div class="price">${o.price} €</div>
+          <button type="button" class="btnSmall" onclick="buyOffer('${esc(o.id)}')">Acheter</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  window.buyOffer = (id) => {
+    const o = OFFERS.find(x => x.id === id);
+    if(!o) return;
+
+    $("subject").value = `Achat - ${o.label} (${o.price} €)`;
+    $("details").value =
 `Bonjour,
-Je souhaite acheter l’offre ${o.label} (${o.price} €).
+Je souhaite acheter l’offre : ${o.label} (${o.price} €).
 
-Moyen de paiement :
-Pseudo Discord :`;
- scrollToTickets();
-}
+Moyen de paiement : (PayPal / Crypto / Carte)
+Pseudo Discord :
+Infos supplémentaires :`;
 
-renderShop();
+    scrollToTickets();
+    setTimeout(() => { if(!$("pseudo").value.trim()) $("pseudo").focus(); }, 200);
+  };
+
+  // =============================
+  // Tickets list UI
+  // =============================
+  function renderTickets(){
+    const root = $("ticketsList");
+    const list = loadTickets();
+
+    if(!list.length){
+      root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
+      return;
+    }
+
+    root.innerHTML = list.map(t => `
+      <div class="ticketBox">
+        <div class="ticketTop">
+          <div><b>${esc(t.subject || "Ticket")}</b></div>
+          <div class="ticketId">ID: <b>${esc(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}</div>
+        </div>
+        <div class="ticketMsg">${esc(t.details || "")}</div>
+        <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${esc(t.contact || "—")}</div>
+        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btnGhost btnSmall" onclick="window.open('${esc(t.channelUrl || "")}','_blank')">Ouvrir sur Discord</button>
+          <button type="button" class="btnGhost btnSmall" onclick="removeTicket('${esc(t.id)}')">Supprimer local</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  window.removeTicket = (id) => {
+    saveTickets(loadTickets().filter(t => t.id !== id));
+  };
+
+  // =============================
+  // API status
+  // =============================
+  async function checkApi(){
+    const el = $("apiState");
+    const set = (cls, txt) => { el.innerHTML = `<span class="statusDot ${cls}"></span>${txt}`; };
+
+    try{
+      const r = await fetch(API_URL + "/status", { cache:"no-store" });
+      const j = await r.json().catch(()=> ({}));
+      if(j.online === true && j.botReady === true) set("statusOk", "✅ API en ligne (bot prêt)");
+      else if(j.online === true) set("statusWarn", "⚠️ API en ligne (bot pas prêt)");
+      else set("statusBad", "❌ API inaccessible");
+    }catch{
+      set("statusBad", "❌ API inaccessible");
+    }
+  }
+
+  // =============================
+  // Submit ticket (envoi API)
+  // =============================
+  let isSubmitting = false;
+
+  $("ticketForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if(isSubmitting) return;
+    isSubmitting = true;
+
+    const submitBtn = $("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Envoi...";
+
+    const data = {
+      pseudo: $("pseudo").value.trim(),
+      contact: $("contact").value.trim(),
+      subject: $("subject").value.trim(),
+      details: $("details").value.trim(),
+      idempotencyKey: (crypto?.randomUUID ? crypto.randomUUID() : ("k_" + Math.random().toString(36).slice(2) + Date.now()))
+    };
+
+    try{
+      const res = await fetch(API_URL + "/api/ticket", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const json = await res.json().catch(()=> ({}));
+
+      if(res.ok && json.ok){
+        const list = loadTickets();
+        list.unshift({
+          id: json.id,
+          subject: data.subject,
+          details: data.details,
+          contact: data.contact,
+          createdAt: Date.now(),
+          channelUrl: json.channelUrl || ""
+        });
+        saveTickets(list);
+
+        alert("✅ Ticket créé ! ID: " + json.id);
+        if(json.channelUrl) window.open(json.channelUrl, "_blank");
+
+        $("ticketForm").reset();
+        scrollToTickets();
+      } else {
+        alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
+      }
+    }catch{
+      alert("❌ Erreur réseau");
+    }finally{
+      isSubmitting = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Créer le ticket";
+    }
+  });
+
+  // =============================
+  // Buttons
+  // =============================
+  $("buyDiscordBtn").onclick = openDiscord;
+  $("goTicketBtn").onclick = scrollToTickets;
+  $("discordBtn").onclick = openDiscord;
+  $("clearBtn").onclick = () => { localStorage.removeItem(STORAGE_KEY); renderTickets(); };
+  $("resetBtn").onclick = () => $("ticketForm").reset();
+
+  // Click animations / actions
+  $("logoBtn").onclick = () => openDiscord(); // clique logo => discord
+  $("bannerBtn").onclick = () => scrollToTickets(); // clique bannière => ticket
+
+  // init
+  renderShop();
+  renderTickets();
+  checkApi();
+  setInterval(checkApi, 30000);
 </script>
 
 </body>
