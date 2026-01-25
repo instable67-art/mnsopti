@@ -43,6 +43,25 @@ app.get("/", (req, res) => {
 app.get("/status", (req, res) => {
   res.json({ online: true });
 });
+app.use(express.json()); // si pas déjà présent
+
+app.post("/api/ticket", async (req, res) => {
+  try {
+    const { pseudo, contact, subject, details } = req.body || {};
+
+    if (!pseudo || !subject || !details) {
+      return res.status(400).json({ ok: false, error: "Champs manquants" });
+    }
+
+    // ⚠️ ICI tu dois appeler ton bot Discord pour envoyer le ticket
+    // Pour l’instant on répond juste OK pour tester
+    const id = "MNS-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+
+    return res.json({ ok: true, id });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: "Erreur serveur" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`🌐 API en ligne sur http://localhost:${PORT}`);
