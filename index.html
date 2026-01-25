@@ -30,7 +30,6 @@
       text-align:center;
     }
 
-    /* Bannière */
     .banner{
       width:100%;
       max-width:980px;
@@ -179,7 +178,6 @@
   <div class="wrap">
 
     <header>
-      <!-- ✅ Mets une image dans le repo MSNOPTI avec ce nom : banner.png -->
       <div class="banner">
         <img src="banner.png" alt="MNS OPTI" onerror="this.style.display='none'; this.parentElement.style.padding='26px'; this.parentElement.innerHTML='<div style=&quot;color:#fff;font-weight:800;font-size:22px;text-align:center;padding:22px;&quot;>MNS OPTI</div><div style=&quot;color:#b9b9b9;text-align:center;padding-bottom:22px;&quot;>Ajoute <b>banner.png</b> dans le repo</div>';">
       </div>
@@ -189,7 +187,6 @@
     </header>
 
     <div class="grid">
-      <!-- Boutique -->
       <div class="card">
         <h2>🛒 Boutique – MNS NIC</h2>
 
@@ -216,9 +213,10 @@
           <button type="button" onclick="openDiscord()">Acheter via Discord</button>
           <button type="button" class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
         </div>
+
+        <div class="muted" id="apiState" style="margin-top:12px;">⏳ Vérification du bot…</div>
       </div>
 
-      <!-- Tickets enregistrés (local) -->
       <div class="card">
         <h2>📌 Mes tickets (local)</h2>
         <p class="muted">Ils sont enregistrés dans ton navigateur. L’équipe ne les voit pas tant que tu ne partages pas l’ID sur Discord.</p>
@@ -232,7 +230,6 @@
       </div>
     </div>
 
-    <!-- Formulaire ticket -->
     <div class="card" id="ticketsSection" style="margin-top:18px;">
       <h2>🎫 Créer un ticket</h2>
       <p class="muted">Ça envoie ton message au bot Discord via ton serveur Render.</p>
@@ -268,8 +265,7 @@
   </div>
 
   <script>
-    // ✅ MET TON URL RENDER ICI (SANS / à la fin)
-    // Exemple: https://mnsopti-bot.onrender.com
+    // ✅ TON URL RENDER (SANS / à la fin)
     const API_URL = "https://mnsopti-bot.onrender.com";
 
     function openDiscord(){
@@ -278,6 +274,39 @@
     function scrollToTickets(){
       document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"});
     }
+
+    // --- Vérifie si le serveur Render répond vraiment ---
+    async function checkApiOnline(){
+      const el = document.getElementById("apiState");
+      if(!el) return;
+
+      try{
+        // On teste /status en priorité (à ajouter côté serveur)
+        const r = await fetch(API_URL + "/status", { cache: "no-store" });
+        if(!r.ok) throw new Error("Status not ok: " + r.status);
+        const j = await r.json().catch(()=> ({}));
+        if(j && j.online === true){
+          el.textContent = "✅ Bot/API en ligne";
+        }else{
+          el.textContent = "⚠️ API répond mais /status ne renvoie pas {online:true}";
+        }
+      }catch(e){
+        // fallback : on tente juste /
+        try{
+          const r2 = await fetch(API_URL + "/", { cache: "no-store" });
+          if(r2.ok){
+            el.textContent = "⚠️ API en ligne, mais /status manque (ajoute la route)";
+          }else{
+            el.textContent = "❌ API inaccessible (Render off ?)";
+          }
+        }catch{
+          el.textContent = "❌ API inaccessible (Render off ?)";
+        }
+      }
+    }
+
+    checkApiOnline();
+    setInterval(checkApiOnline, 30000);
 
     // Tickets local storage
     const STORAGE_KEY = "mnsopti_tickets_v1";
@@ -343,17 +372,21 @@
     ticketForm.addEventListener("submit", async (e)=>{
       e.preventDefault();
 
-      if(!API_URL || API_URL.includes("onrender.com") === false){
-        alert("⚠️ Mets ton URL Render dans API_URL (en haut du script).");
-        return;
-      }
-
       const data = {
         pseudo: document.getElementById("pseudo").value.trim(),
         contact: document.getElementById("contact").value.trim(),
         subject: document.getElementById("subject").value.trim(),
         details: document.getElementById("details").value.trim()
       };
+
+      // Vérification rapide API avant d'envoyer
+      try{
+        const ping = await fetch(API_URL + "/status", { cache:"no-store" });
+        if(!ping.ok) throw new Error("no status");
+      }catch{
+        alert("❌ API Render inaccessible ou route /status manquante.\n➡️ Ajoute GET /status côté serveur et redeploie Render.");
+        return;
+      }
 
       try{
         const res = await fetch(API_URL + "/api/ticket",{
@@ -365,7 +398,6 @@
         const json = await res.json().catch(()=> ({}));
 
         if(res.ok && json.ok){
-          // Sauvegarde local + affichage
           const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
           const list = loadTickets();
           list.unshift({
@@ -383,10 +415,15 @@
           ticketForm.reset();
           scrollToTickets();
         }else{
-          alert("❌ Erreur : le bot a répondu mais ça n’a pas créé le ticket.");
+          // Message plus clair selon le cas
+          if(res.status === 404){
+            alert("❌ Route /api/ticket introuvable côté serveur.\n➡️ Ajoute POST /api/ticket sur ton bot Render.");
+          }else{
+            alert("❌ Erreur côté bot : " + (json.error || "Réponse invalide"));
+          }
         }
       }catch(err){
-        alert("❌ Bot hors ligne / erreur réseau. Vérifie que Render est bien 'Live'.");
+        alert("❌ Erreur réseau.\n➡️ Si ton bot est en ligne sur Discord, c'est souvent CORS ou API qui crash.");
       }
     });
   </script>
