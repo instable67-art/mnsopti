@@ -1,708 +1,284 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MNS OPTI</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MNS OPTI</title>
 
-  <style>
-    :root{
-      --bg:#050505;
-      --card:#0d0d0d;
-      --stroke:#2b2b2b;
-      --text:#ffffff;
-      --muted:#b9b9b9;
-      --accent:#ffffff;
+<style>
+:root{
+  --bg:#050505;
+  --card:#0d0d0d;
+  --stroke:#2b2b2b;
+  --text:#ffffff;
+  --muted:#b9b9b9;
+  --accent:#ffffff;
+  --radius:16px;
+}
 
-      --radius:18px;
-      --shadow: 0 24px 80px rgba(0,0,0,0.55);
-      --shadowSoft: 0 16px 50px rgba(0,0,0,0.45);
-    }
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(1200px 600px at 50% 0%, rgba(255,255,255,0.08), transparent 60%),
+    var(--bg);
+  color:var(--text);
+}
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(1200px 600px at 50% 0%, rgba(255,255,255,0.08), transparent 60%),
-        radial-gradient(900px 450px at 10% 20%, rgba(255,255,255,0.04), transparent 55%),
-        var(--bg);
-      color:var(--text);
-      overflow-x:hidden;
-    }
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
 
-    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+/* ===== TOP BAR ===== */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:22px;
+}
 
-    /* ===== Header Pro ===== */
-    header{padding:34px 0 18px;text-align:center}
-    .hero{
-      position:relative;
-      width:100%;
-      max-width:1000px;
-      margin:0 auto;
-      border-radius:24px;
-      overflow:hidden;
-      border:1px solid var(--stroke);
-      background:#080808;
-      box-shadow:var(--shadow);
-      transform:translateZ(0);
-    }
-    .hero::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(800px 300px at 20% 20%, rgba(255,255,255,0.12), transparent 55%),
-        radial-gradient(700px 260px at 80% 35%, rgba(255,255,255,0.06), transparent 55%);
-      pointer-events:none;
-      opacity:.9;
-      mix-blend-mode:screen;
-    }
+.logoBtn{
+  width:70px;height:70px;
+  border-radius:16px;
+  border:1px solid var(--stroke);
+  background:rgba(0,0,0,.35);
+  display:grid;place-items:center;
+  cursor:pointer;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.logoBtn:active{transform:scale(1.1) rotate(8deg)}
+.logoImg{width:48px}
 
-    .bannerBtn{
-      all:unset;
-      display:block;
-      cursor:pointer;
-      width:100%;
-      position:relative;
-    }
-    .bannerImg{
-      width:100%;
-      display:block;
-      height:auto;
-      transform: scale(1.01);
-      filter: contrast(1.05) brightness(1.02);
-      transition: transform 650ms cubic-bezier(.2,.8,.2,1), filter 650ms cubic-bezier(.2,.8,.2,1);
-      user-select:none;
-      -webkit-user-drag:none;
-    }
-    .hero:hover .bannerImg{
-      transform: scale(1.035);
-      filter: contrast(1.09) brightness(1.05);
-    }
+.bannerBtn{
+  max-width:420px;
+  width:100%;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid var(--stroke);
+  cursor:pointer;
+}
+.bannerImg{
+  width:100%;
+  display:block;
+  transition:transform .6s ease;
+}
+.bannerBtn:hover .bannerImg{transform:scale(1.05)}
 
-    .heroOverlay{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      padding:18px 18px 16px;
-      gap:14px;
-      pointer-events:none;
-      background: linear-gradient(180deg, rgba(0,0,0,0.0) 45%, rgba(0,0,0,0.60) 100%);
-    }
+/* ===== TITRE ===== */
+.headerText{
+  text-align:center;
+  margin-bottom:26px;
+}
+.headerText h1{
+  margin:0;
+  font-size:38px;
+  letter-spacing:2px;
+}
+.headerText p{
+  margin-top:6px;
+  color:var(--muted);
+}
 
-    .brandRow{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      pointer-events:auto;
-    }
+/* ===== GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .topbar{flex-direction:column}
+}
 
-    .logoBtn{
-      all:unset;
-      cursor:pointer;
-      width:76px;height:76px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,0.14);
-      background: rgba(0,0,0,0.25);
-      box-shadow: 0 12px 45px rgba(0,0,0,0.55);
-      display:grid;
-      place-items:center;
-      backdrop-filter: blur(8px);
-      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
-      position:relative;
-      overflow:hidden;
-    }
-    .logoBtn::after{
-      content:"";
-      position:absolute; inset:-40%;
-      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.22), transparent 60%);
-      opacity:0;
-      transition:opacity 220ms ease;
-      pointer-events:none;
-    }
-    .logoBtn:hover{
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,0.25);
-      box-shadow: 0 18px 60px rgba(0,0,0,0.65);
-    }
-    .logoBtn:hover::after{opacity:1}
+/* ===== CARDS ===== */
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  border:1px solid var(--stroke);
+  border-radius:var(--radius);
+  padding:18px;
+}
+h2{margin:0 0 12px;font-size:18px}
+.muted{color:var(--muted);font-size:14px}
 
-    .logoImg{
-      width:54px;height:54px;
-      object-fit:contain;
-      user-select:none;
-      -webkit-user-drag:none;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.65));
-      transition: transform 220ms ease;
-    }
+/* ===== SHOP ===== */
+.shopList{display:flex;flex-direction:column;gap:10px}
+.shopItem{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border:1px solid var(--stroke);
+  border-radius:14px;
+  background:rgba(0,0,0,.25);
+  transition:transform .2s ease;
+}
+.shopItem:hover{transform:translateY(-2px)}
+.pill{
+  border:1px solid var(--stroke);
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:12px;
+  color:var(--muted);
+}
+.price{font-weight:900}
 
-    .titleBlock{ text-align:left; pointer-events:none; }
-    .title{ margin:0; font-size:30px; letter-spacing:1.2px; line-height:1.05; }
-    .subtitle{ margin:6px 0 0; color:var(--muted); font-size:14px; }
+.shopActions{display:flex;gap:10px}
 
-    .quickActions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      pointer-events:auto;
-      justify-content:flex-end;
-    }
+/* ===== BUTTONS ===== */
+button{
+  border:none;
+  border-radius:12px;
+  padding:12px 14px;
+  font-weight:800;
+  cursor:pointer;
+  background:var(--accent);
+  color:#000;
+}
+.btnGhost{
+  background:transparent;
+  color:#fff;
+  border:1px solid var(--stroke);
+}
+.btnSmall{padding:10px 12px}
 
-    /* ===== Layout ===== */
-    .grid{
-      display:grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap:18px;
-      margin-top:18px;
-    }
-    @media (max-width: 900px){
-      .grid{grid-template-columns:1fr}
-      .heroOverlay{flex-direction:column;align-items:flex-start}
-      .quickActions{justify-content:flex-start}
-      .logoBtn{width:70px;height:70px}
-      .logoImg{width:50px;height:50px}
-      .title{font-size:26px}
-    }
+/* ===== FORM ===== */
+label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
+input,textarea{
+  width:100%;margin-top:8px;padding:12px;
+  border-radius:12px;border:1px solid var(--stroke);
+  background:rgba(0,0,0,.25);color:#fff;
+}
+textarea{min-height:110px}
 
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
-      border:1px solid var(--stroke);
-      border-radius: var(--radius);
-      padding:18px;
-      box-shadow: var(--shadowSoft);
-    }
-
-    h2{margin:0 0 12px;font-size:18px;letter-spacing:0.2px}
-    .muted{color:var(--muted);font-size:14px}
-
-    /* ===== Boutique (dynamique) ===== */
-    .shopList{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-    .shopItem{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:14px 14px;
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      background: rgba(0,0,0,0.28);
-      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
-    }
-    .shopItem:hover{
-      transform: translateY(-1px);
-      border-color: rgba(255,255,255,0.16);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
-    }
-    .shopLeft{
-      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-    }
-    .shopLeft b{font-size:15px}
-    .pill{
-      border:1px solid var(--stroke);
-      border-radius:999px;
-      padding:6px 10px;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .priceTag{
-      font-weight:900;
-      letter-spacing:0.2px;
-      font-size:15px;
-      white-space:nowrap;
-    }
-    .shopActions{
-      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-    }
-
-    /* ===== Buttons pro ===== */
-    button{
-      appearance:none;
-      border:none;
-      border-radius:12px;
-      padding:12px 14px;
-      font-weight:900;
-      cursor:pointer;
-      background:var(--accent);
-      color:#000;
-      transition: transform 120ms ease, opacity 160ms ease, box-shadow 220ms ease;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
-    button:hover{opacity:0.92}
-    button:active{transform: translateY(1px)}
-    button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-
-    .btnSmall{ padding:10px 12px; border-radius:12px; font-weight:900; }
-    .btnGhost{
-      background:transparent;
-      color:#fff;
-      border:1px solid var(--stroke);
-      font-weight:800;
-      box-shadow:none;
-    }
-    .btnBuy{
-      position:relative;
-      isolation:isolate;
-      overflow:hidden;
-    }
-    .btnBuy::before{
-      content:"";
-      position:absolute; inset:-40%;
-      background: radial-gradient(circle at 30% 20%, rgba(0,0,0,0.25), transparent 60%);
-      transform: translateX(-25%);
-      opacity:0.0;
-      transition: opacity 200ms ease;
-      z-index:-1;
-    }
-    .btnBuy:hover::before{opacity:1}
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-
-    /* ===== Form ===== */
-    label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
-    input, textarea{
-      width:100%;
-      margin-top:8px;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid var(--stroke);
-      background:rgba(0,0,0,0.28);
-      color:#fff;
-      outline:none;
-      transition: border-color 160ms ease;
-    }
-    input:focus, textarea:focus{border-color: rgba(255,255,255,0.22)}
-    textarea{min-height:110px;resize:vertical}
-
-    /* ===== Tickets list ===== */
-    .ticketsList{margin-top:10px;display:flex;flex-direction:column;gap:10px}
-    .ticketBox{border:1px solid var(--stroke);background:rgba(0,0,0,0.28);border-radius:14px;padding:12px}
-    .ticketTop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .ticketId{font-size:13px;color:var(--muted)}
-    .ticketMsg{margin:10px 0 0;color:#fff;font-size:14px;white-space:pre-wrap;word-break:break-word}
-
-    footer{margin:28px 0 10px;padding:18px 0 0;border-top:1px solid var(--stroke);text-align:center;color:var(--muted);font-size:13px}
-    a{color:#fff}
-
-    /* ===== Status dot ===== */
-    .statusDot{
-      display:inline-block;
-      width:8px;height:8px;border-radius:999px;
-      background: rgba(255,255,255,0.25);
-      margin-right:8px;
-      vertical-align:middle;
-    }
-    .statusOk{ background: rgba(255,255,255,0.95); }
-    .statusWarn{ background: rgba(255,255,255,0.55); }
-    .statusBad{ background: rgba(255,255,255,0.18); }
-
-    /* ===== Animations ===== */
-    @keyframes logoClick {
-      0%   { transform: translateY(0) rotate(0deg) scale(1); box-shadow: 0 12px 45px rgba(0,0,0,0.55); }
-      35%  { transform: translateY(-2px) rotate(-6deg) scale(1.06); box-shadow: 0 0 0 10px rgba(255,255,255,0.06), 0 18px 80px rgba(0,0,0,0.7); }
-      70%  { transform: translateY(-1px) rotate(6deg) scale(1.04);  box-shadow: 0 0 0 18px rgba(255,255,255,0.03), 0 16px 70px rgba(0,0,0,0.68); }
-      100% { transform: translateY(0) rotate(0deg) scale(1); box-shadow: 0 12px 45px rgba(0,0,0,0.55); }
-    }
-    @keyframes logoInner {
-      0%   { transform: rotate(0deg) scale(1); }
-      50%  { transform: rotate(18deg) scale(1.06); }
-      100% { transform: rotate(0deg) scale(1); }
-    }
-    .logoBtn.anim { animation: logoClick 720ms cubic-bezier(.2,.8,.2,1); border-color: rgba(255,255,255,0.28); }
-    .logoBtn.anim .logoImg{ animation: logoInner 720ms cubic-bezier(.2,.8,.2,1); }
-
-    @keyframes bannerFlash {
-      0%   { transform: rotate(0deg) scale(1); }
-      40%  { transform: rotate(-0.3deg) scale(1.01); }
-      100% { transform: rotate(0deg) scale(1); }
-    }
-    .hero.anim { animation: bannerFlash 650ms cubic-bezier(.2,.8,.2,1); }
-
-    .shimmer{
-      position:absolute;
-      inset:-30%;
-      background: linear-gradient(120deg,
-        transparent 0%,
-        rgba(255,255,255,0.05) 35%,
-        rgba(255,255,255,0.18) 50%,
-        rgba(255,255,255,0.05) 65%,
-        transparent 100%);
-      transform: translateX(-70%) rotate(10deg);
-      opacity:0;
-      pointer-events:none;
-    }
-    .hero.anim .shimmer{
-      opacity:1;
-      animation: shimmerMove 800ms ease;
-    }
-    @keyframes shimmerMove{
-      0%{ transform: translateX(-80%) rotate(10deg); }
-      100%{ transform: translateX(80%) rotate(10deg); }
-    }
-
-    /* micro feedback on "Acheter" */
-    @keyframes pop {
-      0%{ transform: translateY(0) scale(1); }
-      40%{ transform: translateY(-1px) scale(1.04); }
-      100%{ transform: translateY(0) scale(1); }
-    }
-    .btnBuy.pop{ animation: pop 360ms cubic-bezier(.2,.8,.2,1); }
-  </style>
+/* ===== FOOTER ===== */
+footer{
+  margin:28px 0 10px;
+  padding-top:18px;
+  border-top:1px solid var(--stroke);
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
+<div class="wrap">
 
-    <header>
-      <div class="hero" id="hero">
-        <div class="shimmer"></div>
-
-        <button class="bannerBtn" id="bannerBtn" type="button" aria-label="Bannière MNS OPTI">
-          <img class="bannerImg" src="banner.png" alt="MNS OPTI Banner"
-            onerror="this.style.display='none'; this.closest('.hero').style.padding='26px'; this.closest('.hero').innerHTML='<div style=&quot;color:#fff;font-weight:800;font-size:22px;text-align:center;padding:22px;&quot;>MNS OPTI</div><div style=&quot;color:#b9b9b9;text-align:center;padding-bottom:22px;&quot;>Ajoute <b>banner.png</b> dans le repo</div>';"/>
-        </button>
-
-        <div class="heroOverlay">
-          <div class="brandRow">
-            <button class="logoBtn" id="logoBtn" type="button" aria-label="Logo MNS OPTI">
-              <img class="logoImg" src="logo.png" alt="MNS OPTI Logo"
-                onerror="this.style.display='none'; this.parentElement.textContent='M'; this.parentElement.style.fontWeight='900'; this.parentElement.style.fontSize='28px';"/>
-            </button>
-
-            <div class="titleBlock">
-              <h1 class="title">MNS OPTI</h1>
-              <p class="subtitle">Boutique + Tickets → Discord</p>
-            </div>
-          </div>
-
-          <div class="quickActions">
-            <button type="button" class="btnGhost btnSmall" id="goDiscordTop">Discord</button>
-            <button type="button" class="btnSmall" id="goTicketsTop">Créer un ticket</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="grid">
-      <div class="card">
-        <h2>🛒 Boutique – MNS NIC</h2>
-        <p class="muted" style="margin-top:-6px;">Choisis une offre : le ticket se pré-remplit automatiquement.</p>
-
-        <!-- Liste dynamique -->
-        <div id="shopList" class="shopList"></div>
-
-        <p class="muted" style="margin-top:12px;">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
-
-        <div class="btnRow">
-          <button type="button" class="btnGhost" id="browseDiscordBtn">Voir sur Discord</button>
-          <button type="button" id="createTicketBtn">Créer un ticket</button>
-        </div>
-
-        <div class="muted" id="apiState" style="margin-top:12px;">
-          <span class="statusDot"></span>⏳ Vérification API…
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>📌 Mes tickets (local)</h2>
-        <p class="muted">Ils sont enregistrés dans ton navigateur.</p>
-
-        <div id="ticketsList" class="ticketsList"></div>
-
-        <div class="btnRow">
-          <button type="button" class="btnGhost" id="discordBtn">Aller sur Discord</button>
-          <button type="button" class="btnGhost" id="clearBtn">Tout supprimer</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" id="ticketsSection" style="margin-top:18px;">
-      <h2>🎫 Créer un ticket</h2>
-      <p class="muted">Ton message est envoyé au bot Discord via Render.</p>
-
-      <form id="ticketForm">
-        <label>Pseudo</label>
-        <input id="pseudo" required placeholder="Ton pseudo" />
-
-        <label>Contact (optionnel)</label>
-        <input id="contact" placeholder="email / discord / etc" />
-
-        <label>Sujet</label>
-        <input id="subject" required placeholder="Ex: Problème, achat, question..." />
-
-        <label>Détails</label>
-        <textarea id="details" required placeholder="Explique ton souci / ta demande..."></textarea>
-
-        <div class="btnRow">
-          <button id="submitBtn" type="submit">Créer le ticket</button>
-          <button type="button" class="btnGhost" id="resetBtn">Effacer</button>
-        </div>
-      </form>
-
-      <p class="muted" style="margin-top:12px;">Après création, tu peux ouvrir le salon ticket sur Discord.</p>
-    </div>
-
-    <footer>
-      Discord : <a href="https://discord.gg/mnsopti" target="_blank" rel="noreferrer">discord.gg/mnsopti</a>
-      <div style="margin-top:8px;">© 2026 MNS OPTI</div>
-    </footer>
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <!-- LOGO GAUCHE -->
+  <div class="logoBtn" id="logoBtn">
+    <img src="logo.png" class="logoImg" alt="Logo">
   </div>
 
-  <script>
-    // =============================
-    // CONFIG
-    // =============================
-    const API_URL = "https://mnsopti-bot.onrender.com"; // change si besoin
-    const STORAGE_KEY = "mnsopti_tickets_v6";
+  <!-- BANNIÈRE DROITE (RÉDUITE) -->
+  <div class="bannerBtn" id="bannerBtn">
+    <img src="banner.png" class="bannerImg" alt="Banner">
+  </div>
+</div>
 
-    // ✅ PRIX DYNAMIQUES (change ici et tout s'update)
-    const OFFERS = [
-      { id:"week",     label:"1 semaine",  price: 5,  tag:"Accès" },
-      { id:"month",    label:"1 mois",     price: 10, tag:"Accès" },
-      { id:"3months",  label:"3 mois",     price: 15, tag:"Accès" },
-      { id:"lifetime", label:"Lifetime",   price: 25, tag:"Accès" },
-    ];
+<!-- ===== TITRE ===== -->
+<div class="headerText">
+  <h1>MNS OPTI</h1>
+  <p>Boutique + Tickets → Discord</p>
+</div>
 
-    // =============================
-    // Helpers
-    // =============================
-    const $ = (id) => document.getElementById(id);
-    const openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
-    const scrollToTickets = () => $("ticketsSection")?.scrollIntoView({ behavior:"smooth" });
+<div class="grid">
 
-    const esc = (s) => String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
+<!-- ===== SHOP ===== -->
+<div class="card">
+<h2>🛒 Boutique – MNS NIC</h2>
+<p class="muted">Clique sur une offre pour pré-remplir le ticket</p>
 
-    function playAnim(el, cls){
-      el.classList.remove(cls);
-      void el.offsetWidth;
-      el.classList.add(cls);
-      el.addEventListener("animationend", () => el.classList.remove(cls), { once:true });
-    }
+<div id="shopList" class="shopList"></div>
 
-    function loadTickets(){
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
-      catch { return []; }
-    }
-    function saveTickets(list){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      renderTickets();
-    }
+<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+  <button onclick="openDiscord()">Acheter via Discord</button>
+  <button class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
+</div>
+</div>
 
-    // =============================
-    // Boutique dynamique + bouton acheter
-    // =============================
-    function formatPriceEUR(n){
-      // 5 -> "5 €"
-      return `${Number(n)} €`;
-    }
+<!-- ===== TICKETS ===== -->
+<div class="card">
+<h2>📌 Mes tickets</h2>
+<p class="muted">Stockés dans ton navigateur</p>
+<div id="ticketsList" class="muted">Aucun ticket</div>
+</div>
 
-    function buyOffer(offerId){
-      const offer = OFFERS.find(o => o.id === offerId);
-      if(!offer) return;
+</div>
 
-      // animation sur le bouton cliqué
-      const btn = document.querySelector(`[data-buy="${offerId}"]`);
-      if(btn){
-        btn.classList.remove("pop");
-        void btn.offsetWidth;
-        btn.classList.add("pop");
-        btn.addEventListener("animationend", () => btn.classList.remove("pop"), { once:true });
-      }
+<!-- ===== CREATE TICKET ===== -->
+<div class="card" id="ticketsSection" style="margin-top:18px;">
+<h2>🎫 Créer un ticket</h2>
 
-      // Pré-remplit le formulaire ticket
-      $("subject").value = `Achat - ${offer.label} (${formatPriceEUR(offer.price)})`;
-      $("details").value =
+<form id="ticketForm">
+<label>Pseudo</label>
+<input id="pseudo" required>
+
+<label>Contact</label>
+<input id="contact">
+
+<label>Sujet</label>
+<input id="subject" required>
+
+<label>Détails</label>
+<textarea id="details" required></textarea>
+
+<div style="margin-top:12px">
+<button type="submit">Créer le ticket</button>
+</div>
+</form>
+</div>
+
+<footer>
+Discord : <a href="https://discord.gg/mnsopti">discord.gg/mnsopti</a><br>
+© 2026 MNS OPTI
+</footer>
+
+</div>
+
+<script>
+const API_URL="https://mnsopti-bot.onrender.com";
+const OFFERS=[
+ {id:"week",label:"1 semaine",price:5},
+ {id:"month",label:"1 mois",price:10},
+ {id:"3months",label:"3 mois",price:15},
+ {id:"lifetime",label:"Lifetime",price:25},
+];
+
+function openDiscord(){window.open("https://discord.gg/mnsopti","_blank")}
+function scrollToTickets(){document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"})}
+
+function renderShop(){
+ const root=document.getElementById("shopList");
+ root.innerHTML=OFFERS.map(o=>`
+  <div class="shopItem">
+    <div>
+      <b>${o.label}</b> <span class="pill">Accès</span>
+    </div>
+    <div class="shopActions">
+      <div class="price">${o.price} €</div>
+      <button class="btnSmall" onclick="buyOffer('${o.id}')">Acheter</button>
+    </div>
+  </div>
+ `).join("");
+}
+
+function buyOffer(id){
+ const o=OFFERS.find(x=>x.id===id);
+ document.getElementById("subject").value=`Achat - ${o.label} (${o.price} €)`;
+ document.getElementById("details").value=
 `Bonjour,
-Je voudrais acheter l’offre : ${offer.label} (${formatPriceEUR(offer.price)}).
+Je souhaite acheter l’offre ${o.label} (${o.price} €).
 
-Moyen de paiement : (PayPal / Crypto / Carte)
-Pseudo Discord : 
-Infos supplémentaires :`;
+Moyen de paiement :
+Pseudo Discord :`;
+ scrollToTickets();
+}
 
-      scrollToTickets();
-      // focus sur pseudo si vide, sinon sur contact
-      setTimeout(() => {
-        if(!$("pseudo").value.trim()) $("pseudo").focus();
-        else $("contact").focus();
-      }, 250);
-    }
+renderShop();
+</script>
 
-    function renderShop(){
-      const root = $("shopList");
-      if(!root) return;
-
-      root.innerHTML = OFFERS.map(o => `
-        <div class="shopItem">
-          <div class="shopLeft">
-            <div><b>${esc(o.label)}</b> <span class="pill">${esc(o.tag || "Accès")}</span></div>
-            <div class="muted" style="font-size:12px;">Support + activation rapide</div>
-          </div>
-
-          <div class="shopActions">
-            <div class="priceTag">${formatPriceEUR(o.price)}</div>
-            <button type="button" class="btnSmall btnBuy" data-buy="${esc(o.id)}">Acheter</button>
-          </div>
-        </div>
-      `).join("");
-
-      // bind buttons
-      OFFERS.forEach(o => {
-        const btn = document.querySelector(`[data-buy="${o.id}"]`);
-        if(btn) btn.addEventListener("click", () => buyOffer(o.id));
-      });
-    }
-
-    // =============================
-    // Tickets list
-    // =============================
-    function renderTickets(){
-      const root = $("ticketsList");
-      if(!root) return;
-
-      const list = loadTickets();
-      if(!list.length){
-        root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
-        return;
-      }
-
-      root.innerHTML = list.map(t => `
-        <div class="ticketBox">
-          <div class="ticketTop">
-            <div><b>${esc(t.subject || "Ticket")}</b></div>
-            <div class="ticketId">
-              ID: <b>${esc(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}
-            </div>
-          </div>
-
-          <div class="ticketMsg">${esc(t.details || "")}</div>
-          <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${esc(t.contact || "—")}</div>
-
-          <div class="btnRow" style="margin-top:10px;">
-            <button type="button" class="btnGhost btnSmall" onclick="window.open('${esc(t.channelUrl || "")}','_blank')">Ouvrir sur Discord</button>
-            <button type="button" class="btnGhost btnSmall" onclick="(function(){ const list=loadTickets().filter(x=>x.id!=='${esc(t.id)}'); saveTickets(list); })()">Supprimer local</button>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    // =============================
-    // API Status
-    // =============================
-    async function checkApi(){
-      const el = $("apiState");
-      if(!el) return;
-
-      const set = (cls, txt) => {
-        el.innerHTML = `<span class="statusDot ${cls}"></span>${txt}`;
-      };
-
-      try{
-        const r = await fetch(API_URL + "/status", { cache:"no-store" });
-        const j = await r.json().catch(()=> ({}));
-        if(j.online === true && j.botReady === true){
-          set("statusOk", "✅ API en ligne (bot prêt)");
-        } else if (j.online === true){
-          set("statusWarn", "⚠️ API en ligne (bot pas prêt)");
-        } else {
-          set("statusBad", "❌ API inaccessible");
-        }
-      }catch{
-        set("statusBad", "❌ API inaccessible");
-      }
-    }
-
-    // =============================
-    // Animations click logo/banner
-    // =============================
-    $("logoBtn").addEventListener("click", () => playAnim($("logoBtn"), "anim"));
-    $("bannerBtn").addEventListener("click", () => playAnim($("hero"), "anim"));
-
-    // =============================
-    // Buttons init
-    // =============================
-    $("browseDiscordBtn").onclick = openDiscord;
-    $("createTicketBtn").onclick = scrollToTickets;
-
-    $("goDiscordTop").onclick = openDiscord;
-    $("goTicketsTop").onclick = scrollToTickets;
-
-    $("discordBtn").onclick = openDiscord;
-    $("clearBtn").onclick = () => { localStorage.removeItem(STORAGE_KEY); renderTickets(); };
-    $("resetBtn").onclick = () => $("ticketForm").reset();
-
-    // =============================
-    // Ticket submit (ANTI DOUBLON)
-    // =============================
-    let isSubmitting = false;
-
-    $("ticketForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if(isSubmitting) return;
-      isSubmitting = true;
-
-      const submitBtn = $("submitBtn");
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Envoi...";
-
-      const data = {
-        pseudo: $("pseudo").value.trim(),
-        contact: $("contact").value.trim(),
-        subject: $("subject").value.trim(),
-        details: $("details").value.trim(),
-        // ✅ idempotency key: même si retry/4 requêtes => 1 ticket côté serveur
-        idempotencyKey: (crypto?.randomUUID ? crypto.randomUUID() : ("k_" + Math.random().toString(36).slice(2) + Date.now()))
-      };
-
-      try{
-        const res = await fetch(API_URL + "/api/ticket", {
-          method:"POST",
-          headers: { "Content-Type":"application/json" },
-          body: JSON.stringify(data)
-        });
-
-        const json = await res.json().catch(()=> ({}));
-        if(res.ok && json.ok){
-          const list = loadTickets();
-          list.unshift({
-            id: json.id,
-            subject: data.subject,
-            details: data.details,
-            contact: data.contact,
-            createdAt: Date.now(),
-            channelUrl: json.channelUrl || ""
-          });
-          saveTickets(list);
-
-          alert("✅ Ticket créé ! ID: " + json.id);
-          if(json.channelUrl) window.open(json.channelUrl, "_blank");
-
-          $("ticketForm").reset();
-          scrollToTickets();
-        } else {
-          alert("❌ Erreur: " + (json.error || "Erreur inconnue"));
-        }
-      } catch {
-        alert("❌ Erreur réseau");
-      } finally {
-        isSubmitting = false;
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Créer le ticket";
-      }
-    });
-
-    // =============================
-    // Init
-    // =============================
-    renderShop();
-    renderTickets();
-    checkApi();
-    setInterval(checkApi, 30000);
-  </script>
 </body>
 </html>
