@@ -35,6 +35,14 @@ app.use(helmet());
 app.use(express.json({ limit: '50kb' }));
 app.use(cors({ origin: SITE_ORIGIN, methods: ['POST'], allowedHeaders: ['Content-Type'] }));
 app.use(rateLimit({ windowMs: 60000, max: 30 }));
+// Routes de test (OBLIGATOIRE pour le site)
+app.get("/", (req, res) => {
+  res.send("OK");
+});
+
+app.get("/status", (req, res) => {
+  res.json({ online: true });
+});
 
 app.listen(PORT, () => {
   console.log(`🌐 API en ligne sur http://localhost:${PORT}`);
