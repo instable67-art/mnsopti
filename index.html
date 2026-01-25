@@ -12,7 +12,6 @@
 
 <style>
 :root{
-  /* Minimal luxe */
   --bg:#050505;
   --stroke: rgba(255,255,255,.10);
   --stroke2: rgba(255,255,255,.18);
@@ -27,7 +26,6 @@
   --shadow2: 0 14px 36px rgba(0,0,0,.60);
 }
 
-/* Reset doux */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -43,7 +41,6 @@ body{
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Sélection de texte (petit détail premium) */
 ::selection{background: rgba(255,255,255,.18); color: #fff}
 
 /* Scrollbar (Chrome/Edge) */
@@ -57,18 +54,38 @@ a:hover{text-decoration:underline}
 
 .wrap{max-width:1100px;margin:0 auto;padding:22px}
 
-/* ===== HEADER ===== */
+/* ===== HEADER (2 colonnes) ===== */
 .header{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:16px;
-  margin-bottom:26px;
+  display:grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap:18px;
+  align-items:stretch;
+  margin-bottom:18px;
+}
+@media(max-width:980px){
+  .header{grid-template-columns:1fr}
+  .wrap{padding:16px}
+}
+
+.brandBlock{
   text-align:center;
+  margin-top:12px;
+  margin-bottom:10px;
+}
+.brandBlock h1{
+  margin:0;
+  font-size:42px;
+  letter-spacing:1.4px;
+  font-weight:900;
+  line-height:1.05;
+}
+.brandBlock p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:14px;
 }
 
 .bannerBox{
-  max-width:560px;
   width:100%;
   border-radius:22px;
   overflow:hidden;
@@ -93,31 +110,6 @@ a:hover{text-decoration:underline}
   transform: scale(1.01);
 }
 .bannerBox:hover .bannerImg{transform:scale(1.06)}
-
-.header h1{
-  margin:0;
-  font-size:42px;
-  letter-spacing:1.4px;
-  font-weight:900;
-  line-height:1.05;
-}
-.header p{
-  margin:0;
-  color:var(--muted);
-  font-size:14px;
-}
-
-/* ===== GRID ===== */
-.grid{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:18px;
-}
-@media(max-width:900px){
-  .grid{grid-template-columns:1fr}
-  .wrap{padding:16px}
-  .header h1{font-size:34px}
-}
 
 /* ===== CARDS ===== */
 .card{
@@ -145,6 +137,51 @@ h2{
   color:var(--muted);
   font-size:14px;
   line-height:1.45;
+}
+
+/* ===== NIC Description ===== */
+.nicTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.nicTag{
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.nicList{
+  margin:0;
+  padding-left:16px;
+  color: rgba(255,255,255,.82);
+  font-size:14px;
+  line-height:1.5;
+}
+.nicList li{margin:8px 0}
+.nicFoot{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid var(--stroke);
+  color: var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+/* ===== GRID MAIN ===== */
+.grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .brandBlock h1{font-size:34px}
 }
 
 /* ===== SHOP ===== */
@@ -185,7 +222,6 @@ h2{
   color:var(--muted);
   margin-left:8px;
 }
-
 .price{
   font-weight:900;
   font-size:16px;
@@ -222,7 +258,6 @@ button:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
 .btnSmall{padding:10px 12px;border-radius:12px}
 
-/* Focus visible (pro + accessibilité) */
 button:focus-visible, input:focus-visible, textarea:focus-visible{
   outline: 2px solid rgba(255,255,255,.65);
   outline-offset: 2px;
@@ -317,16 +352,13 @@ textarea{min-height:120px;resize:vertical}
 .statusOk{background:#fff}
 .statusWarn{background:rgba(255,255,255,.7)}
 .statusBad{background:rgba(255,255,255,.25)}
-/* petit pulse quand on “vérifie” */
-.statusPulse{
-  animation: pulse 1.2s ease-in-out infinite;
-}
+.statusPulse{animation: pulse 1.2s ease-in-out infinite;}
 @keyframes pulse{
   0%,100%{opacity:.55}
   50%{opacity:1}
 }
 
-/* ===== TOASTS (Niveau 3) ===== */
+/* ===== TOASTS ===== */
 .toastHost{
   position:fixed;
   right:16px;
@@ -389,14 +421,47 @@ footer{
 <body>
 <div class="wrap">
 
-<!-- ===== HEADER ===== -->
+<!-- ===== HEADER (banner + description) ===== -->
 <div class="header">
-  <div class="bannerBox" id="bannerBtn">
-    <img src="banner.png" class="bannerImg" alt="MNS OPTI Banner"
-      onerror="this.style.display='none';this.parentElement.innerHTML='<div style=&quot;padding:20px;text-align:center;color:#b9b9b9&quot;>Ajoute <b>banner.png</b> à la racine</div>';">
+
+  <div>
+    <div class="bannerBox" id="bannerBtn">
+      <img src="banner.png" class="bannerImg" alt="MNS OPTI Banner"
+        onerror="this.style.display='none';this.parentElement.innerHTML='<div style=&quot;padding:20px;text-align:center;color:#b9b9b9&quot;>Ajoute <b>banner.png</b> à la racine</div>';">
+    </div>
+
+    <div class="brandBlock">
+      <h1>MNS OPTI</h1>
+      <p>Boutique + Tickets → Discord</p>
+    </div>
   </div>
-  <h1>MNS OPTI</h1>
-  <p>Boutique + Tickets → Discord</p>
+
+  <!-- Description NIC à droite -->
+  <div class="card">
+    <div class="nicTitle">
+      <h2 style="margin:0">🧩 MNS NIC</h2>
+      <span class="nicTag">Optimisation • FiveM • Restore</span>
+    </div>
+
+    <p class="muted" style="margin:0 0 10px">
+      Outil GUI Windows (PowerShell/WinForms) pensé pour améliorer la stabilité et les performances sur FiveM,
+      avec vérifications système, profils, backups et restauration.
+    </p>
+
+    <ul class="nicList">
+      <li><b>Accès sécurisé</b> : whitelist UUID + verrouillage par clé + licence (KeyAuth/HWID).</li>
+      <li><b>Profil</b> sauvegardé dans <span class="muted">%ProgramData%\MNSNIC\profile.json</span> + logs/backups.</li>
+      <li><b>Checks</b> : CPU / RAM / Disque / Réseau (rapport rapide).</li>
+      <li><b>Optimisations</b> : nettoyage, flush DNS, ajustements Windows (GameDVR, power plan, TCP, etc.).</li>
+      <li><b>Boost FiveM</b> : priorité/affinité, QoS, réseau, timers (selon mode).</li>
+      <li><b>Restore</b> : rollback via sauvegardes (registre, power plan, services) si disponibles.</li>
+    </ul>
+
+    <div class="nicFoot">
+      <b>Conseil</b> : certains réglages demandent les droits admin et un redémarrage pour effet complet.
+    </div>
+  </div>
+
 </div>
 
 <div class="grid">
@@ -462,13 +527,13 @@ footer{
 </div>
 
 <footer>
-Discord : <a href="https://discord.gg/mnsopti" target="_blank">discord.gg/mnsopti</a><br>
+Discord : <a href="https://discord.gg/mnsopti" target="_blank" rel="noopener">discord.gg/mnsopti</a><br>
 © 2026 MNS OPTI
 </footer>
 
 </div>
 
-<!-- Toast container (Niveau 3) -->
+<!-- Toast container -->
 <div id="toastHost" class="toastHost"></div>
 
 <script>
@@ -503,7 +568,7 @@ function toast(msg, ms=2400){
   setTimeout(close, ms);
 }
 
-/* ==== Sécurité front : escape (évite injection HTML dans innerHTML) ==== */
+/* ==== Sécurité front : escape (évite injection HTML) ==== */
 function escapeHtml(str){
   return String(str)
     .replaceAll("&","&amp;")
@@ -537,11 +602,8 @@ function loadDraft(){
     if(details.value.trim()==="") details.value=d.details||"";
   }catch{}
 }
-function clearDraft(){
-  localStorage.removeItem(DRAFT_KEY);
-}
+function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
 
-/* Petites écoutes autosave (debounce) */
 let draftTimer=null;
 function draftTouch(){
   clearTimeout(draftTimer);
@@ -572,7 +634,7 @@ Je souhaite acheter l’offre ${o.label} (${o.price} €).
 Moyen de paiement :
 Pseudo Discord :`;
  scrollToTickets();
- saveDraft(); // niveau 3 : garde le brouillon
+ saveDraft();
 }
 
 /* ==== Tickets (localStorage) ==== */
@@ -589,7 +651,6 @@ function clearTickets(){
  toast("🧹 Tickets locaux supprimés.");
 }
 
-/* Copier texte (niveau 3) */
 async function copyText(txt){
  try{
   await navigator.clipboard.writeText(txt);
@@ -683,7 +744,7 @@ document.getElementById("ticketForm").addEventListener("submit",async e=>{
    if(j.channelUrl) window.open(j.channelUrl,"_blank");
 
    ticketForm.reset();
-   clearDraft(); // niveau 3 : on vide le brouillon après succès
+   clearDraft();
   }else{
    toast("❌ " + (j.error || "Erreur"));
   }
