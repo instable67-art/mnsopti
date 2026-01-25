@@ -1,86 +1,394 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>MNS OPTI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MNS OPTI</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #000;
-  color: #fff;
-}
+  <style>
+    :root{
+      --bg:#050505;
+      --card:#0d0d0d;
+      --stroke:#2b2b2b;
+      --text:#ffffff;
+      --muted:#b9b9b9;
+      --accent:#ffffff;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(1200px 600px at 50% 0%, rgba(255,255,255,0.06), transparent 60%), var(--bg);
+      color:var(--text);
+    }
 
-header {
-  text-align: center;
-  padding: 60px 20px;
-}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
 
-h1 {
-  font-size: 48px;
-}
+    header{
+      padding:44px 0 22px;
+      text-align:center;
+    }
 
-section {
-  max-width: 900px;
-  margin: auto;
-  padding: 40px 20px;
-}
+    /* Bannière */
+    .banner{
+      width:100%;
+      max-width:980px;
+      margin:0 auto;
+      border-radius:22px;
+      overflow:hidden;
+      border:1px solid var(--stroke);
+      background:#0a0a0a;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.55);
+    }
+    .banner img{
+      width:100%;
+      display:block;
+    }
+    .title{
+      margin:26px 0 6px;
+      font-size:56px;
+      letter-spacing:2px;
+    }
+    .subtitle{
+      margin:0 0 6px;
+      color:var(--muted);
+      font-size:16px;
+    }
 
-.card {
-  border: 1px solid #333;
-  padding: 20px;
-  border-radius: 12px;
-  margin: 15px 0;
-}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:18px;
+      margin-top:26px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .title{font-size:42px}
+    }
 
-button {
-  background: #fff;
-  color: #000;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding:18px;
+    }
 
-button:hover {
-  opacity: 0.8;
-}
+    h2{
+      margin:0 0 12px;
+      font-size:20px;
+      letter-spacing:0.2px;
+    }
+    .muted{color:var(--muted);font-size:14px}
 
-footer {
-  text-align: center;
-  padding: 30px;
-  border-top: 1px solid #333;
-}
-</style>
+    .shopItem{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 14px;
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      background: rgba(0,0,0,0.25);
+      margin:10px 0;
+    }
+    .shopItem b{font-size:15px}
+    .pill{
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      border-radius:12px;
+      padding:12px 14px;
+      font-weight:700;
+      cursor:pointer;
+      background:var(--accent);
+      color:#000;
+    }
+    button:hover{opacity:0.9}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btnGhost{
+      background:transparent;
+      color:#fff;
+      border:1px solid var(--stroke);
+      font-weight:600;
+    }
+
+    label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
+    input, textarea{
+      width:100%;
+      margin-top:8px;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,0.25);
+      color:#fff;
+      outline:none;
+    }
+    textarea{min-height:110px;resize:vertical}
+
+    .ticketsList{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .ticketBox{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,0.25);
+      border-radius:14px;
+      padding:12px;
+    }
+    .ticketTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .ticketId{
+      font-size:13px;
+      color:var(--muted);
+    }
+    .ticketMsg{
+      margin:10px 0 0;
+      color:#fff;
+      font-size:14px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    footer{
+      margin:28px 0 10px;
+      padding:18px 0 0;
+      border-top:1px solid var(--stroke);
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+    a{color:#fff}
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
 
-<header>
-  <h1>Welcome to MNS OPTI</h1>
-</header>
+    <header>
+      <!-- ✅ Mets une image dans le repo MSNOPTI avec ce nom : banner.png -->
+      <div class="banner">
+        <img src="banner.png" alt="MNS OPTI" onerror="this.style.display='none'; this.parentElement.style.padding='26px'; this.parentElement.innerHTML='<div style=&quot;color:#fff;font-weight:800;font-size:22px;text-align:center;padding:22px;&quot;>MNS OPTI</div><div style=&quot;color:#b9b9b9;text-align:center;padding-bottom:22px;&quot;>Ajoute <b>banner.png</b> dans le repo</div>';">
+      </div>
 
-<section>
-  <h2>🛒 Boutique – MNS NIC</h2>
+      <div class="title">MNS OPTI</div>
+      <p class="subtitle">Boutique + Tickets → Discord</p>
+    </header>
 
-  <div class="card">1 semaine – <b>6€</b></div>
-  <div class="card">1 mois – <b>12€</b></div>
-  <div class="card">3 mois – <b>24€</b></div>
-  <div class="card">1 an – <b>45€</b></div>
+    <div class="grid">
+      <!-- Boutique -->
+      <div class="card">
+        <h2>🛒 Boutique – MNS NIC</h2>
 
-  <p>Paiements : PayPal / Crypto / Carte</p>
+        <div class="shopItem">
+          <div><b>1 semaine</b> <span class="pill">Accès</span></div>
+          <div><b>6€</b></div>
+        </div>
+        <div class="shopItem">
+          <div><b>1 mois</b> <span class="pill">Accès</span></div>
+          <div><b>12€</b></div>
+        </div>
+        <div class="shopItem">
+          <div><b>3 mois</b> <span class="pill">Accès</span></div>
+          <div><b>24€</b></div>
+        </div>
+        <div class="shopItem">
+          <div><b>1 an</b> <span class="pill">Accès</span></div>
+          <div><b>45€</b></div>
+        </div>
 
-  <button onclick="window.open('https://discord.gg/mnsopti')">
-    Acheter via Discord
-  </button>
-</section>
+        <p class="muted">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
 
-<footer>
-  <p>© 2026 MNS OPTI</p>
-</footer>
+        <div class="btnRow">
+          <button type="button" onclick="openDiscord()">Acheter via Discord</button>
+          <button type="button" class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
+        </div>
+      </div>
 
+      <!-- Tickets enregistrés (local) -->
+      <div class="card">
+        <h2>📌 Mes tickets (local)</h2>
+        <p class="muted">Ils sont enregistrés dans ton navigateur. L’équipe ne les voit pas tant que tu ne partages pas l’ID sur Discord.</p>
+
+        <div id="ticketsList" class="ticketsList"></div>
+
+        <div class="btnRow">
+          <button type="button" class="btnGhost" onclick="openDiscord()">Aller sur Discord</button>
+          <button type="button" class="btnGhost" onclick="clearTickets()">Tout supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire ticket -->
+    <div class="card" id="ticketsSection" style="margin-top:18px;">
+      <h2>🎫 Créer un ticket</h2>
+      <p class="muted">Ça envoie ton message au bot Discord via ton serveur Render.</p>
+
+      <form id="ticketForm">
+        <label>Pseudo</label>
+        <input id="pseudo" required placeholder="Ton pseudo" />
+
+        <label>Contact (optionnel)</label>
+        <input id="contact" placeholder="email / discord / etc" />
+
+        <label>Sujet</label>
+        <input id="subject" required placeholder="Ex: Problème, achat, question..." />
+
+        <label>Détails</label>
+        <textarea id="details" required placeholder="Explique ton souci / ta demande..."></textarea>
+
+        <div class="btnRow">
+          <button type="submit">Créer le ticket</button>
+          <button type="button" class="btnGhost" onclick="ticketForm.reset()">Effacer</button>
+        </div>
+      </form>
+
+      <p class="muted" style="margin-top:12px;">
+        Astuce : après création, copie l’ID dans Discord si besoin.
+      </p>
+    </div>
+
+    <footer>
+      Discord : <a href="https://discord.gg/mnsopti" target="_blank" rel="noreferrer">discord.gg/mnsopti</a>
+      <div style="margin-top:8px;">© 2026 MNS OPTI</div>
+    </footer>
+  </div>
+
+  <script>
+    // ✅ MET TON URL RENDER ICI (SANS / à la fin)
+    // Exemple: https://mnsopti-bot.onrender.com
+    const API_URL = "https://mnsopti-bot.onrender.com";
+
+    function openDiscord(){
+      window.open("https://discord.gg/mnsopti","_blank");
+    }
+    function scrollToTickets(){
+      document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"});
+    }
+
+    // Tickets local storage
+    const STORAGE_KEY = "mnsopti_tickets_v1";
+
+    function loadTickets(){
+      try{
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      }catch{
+        return [];
+      }
+    }
+    function saveTickets(list){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      renderTickets();
+    }
+    function clearTickets(){
+      localStorage.removeItem(STORAGE_KEY);
+      renderTickets();
+    }
+
+    function renderTickets(){
+      const list = loadTickets();
+      const root = document.getElementById("ticketsList");
+      if(!list.length){
+        root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
+        return;
+      }
+
+      root.innerHTML = list.map(t => `
+        <div class="ticketBox">
+          <div class="ticketTop">
+            <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
+            <div class="ticketId">ID: <b>${escapeHtml(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}</div>
+          </div>
+          <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
+          <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${escapeHtml(t.contact || "—")}</div>
+          <div class="btnRow" style="margin-top:10px;">
+            <button type="button" class="btnGhost" onclick="openDiscord()">Aller sur Discord</button>
+            <button type="button" class="btnGhost" onclick="removeTicket('${t.id}')">Supprimer</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function removeTicket(id){
+      const list = loadTickets().filter(t => t.id !== id);
+      saveTickets(list);
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    renderTickets();
+
+    // Form submit -> send to bot
+    const ticketForm = document.getElementById("ticketForm");
+    ticketForm.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+
+      if(!API_URL || API_URL.includes("onrender.com") === false){
+        alert("⚠️ Mets ton URL Render dans API_URL (en haut du script).");
+        return;
+      }
+
+      const data = {
+        pseudo: document.getElementById("pseudo").value.trim(),
+        contact: document.getElementById("contact").value.trim(),
+        subject: document.getElementById("subject").value.trim(),
+        details: document.getElementById("details").value.trim()
+      };
+
+      try{
+        const res = await fetch(API_URL + "/api/ticket",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json().catch(()=> ({}));
+
+        if(res.ok && json.ok){
+          // Sauvegarde local + affichage
+          const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
+          const list = loadTickets();
+          list.unshift({
+            id,
+            subject: data.subject,
+            details: data.details,
+            contact: data.contact,
+            createdAt: Date.now()
+          });
+          saveTickets(list);
+
+          alert("✅ Ticket envoyé sur Discord ! ID: " + id);
+          if(json.channelUrl) window.open(json.channelUrl, "_blank");
+
+          ticketForm.reset();
+          scrollToTickets();
+        }else{
+          alert("❌ Erreur : le bot a répondu mais ça n’a pas créé le ticket.");
+        }
+      }catch(err){
+        alert("❌ Bot hors ligne / erreur réseau. Vérifie que Render est bien 'Live'.");
+      }
+    });
+  </script>
 </body>
 </html>
