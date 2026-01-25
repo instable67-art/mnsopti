@@ -12,9 +12,8 @@
 
 <style>
 :root{
-  /* Minimal luxe : noir profond + blancs doux + bordures subtiles */
+  /* Minimal luxe */
   --bg:#050505;
-  --card: rgba(255,255,255,.04);
   --stroke: rgba(255,255,255,.10);
   --stroke2: rgba(255,255,255,.18);
 
@@ -43,6 +42,15 @@ body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Sélection de texte (petit détail premium) */
+::selection{background: rgba(255,255,255,.18); color: #fff}
+
+/* Scrollbar (Chrome/Edge) */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background: rgba(255,255,255,.03)}
+::-webkit-scrollbar-thumb{background: rgba(255,255,255,.12); border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background: rgba(255,255,255,.18)}
 
 a{color:#fff;text-decoration:none}
 a:hover{text-decoration:underline}
@@ -266,8 +274,36 @@ textarea{min-height:120px;resize:vertical}
 .ticketMsg{
   margin:10px 0 0;
   font-size:14px;
+  line-height:1.5;
   white-space:pre-wrap;
   color: rgba(255,255,255,.80);
+}
+
+.ticketActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.linkBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.02);
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
+  font-size:13px;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+.linkBtn:hover{
+  transform: translateY(-1px);
+  border-color: var(--stroke2);
+  background: rgba(255,255,255,.04);
+  text-decoration:none;
 }
 
 /* ===== API STATE ===== */
@@ -281,6 +317,62 @@ textarea{min-height:120px;resize:vertical}
 .statusOk{background:#fff}
 .statusWarn{background:rgba(255,255,255,.7)}
 .statusBad{background:rgba(255,255,255,.25)}
+/* petit pulse quand on “vérifie” */
+.statusPulse{
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:.55}
+  50%{opacity:1}
+}
+
+/* ===== TOASTS (Niveau 3) ===== */
+.toastHost{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  z-index:9999;
+  pointer-events:none;
+}
+.toast{
+  pointer-events:auto;
+  min-width: 240px;
+  max-width: 360px;
+  border-radius:16px;
+  border:1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  box-shadow: 0 18px 60px rgba(0,0,0,.65);
+  padding:12px 12px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  transform: translateY(6px);
+  opacity:0;
+  animation: toastIn .18s ease forwards;
+}
+@keyframes toastIn{
+  to{transform: translateY(0); opacity:1}
+}
+.toast .txt{
+  font-size:13px;
+  color: rgba(255,255,255,.86);
+  line-height:1.35;
+}
+.toast .x{
+  border:none;
+  border-radius:12px;
+  padding:8px 10px;
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  cursor:pointer;
+  font-weight:900;
+  box-shadow:none;
+}
+.toast .x:hover{background: rgba(255,255,255,.10)}
 
 /* ===== FOOTER ===== */
 footer{
@@ -302,7 +394,6 @@ footer{
   <div class="bannerBox" id="bannerBtn">
     <img src="banner.png" class="bannerImg" alt="MNS OPTI Banner"
       onerror="this.style.display='none';this.parentElement.innerHTML='<div style=&quot;padding:20px;text-align:center;color:#b9b9b9&quot;>Ajoute <b>banner.png</b> à la racine</div>';">
-
   </div>
   <h1>MNS OPTI</h1>
   <p>Boutique + Tickets → Discord</p>
@@ -325,7 +416,7 @@ footer{
 </div>
 
 <div class="muted" id="apiState" style="margin-top:12px;">
-  <span class="statusDot"></span>⏳ Vérification API…
+  <span class="statusDot statusPulse"></span>⏳ Vérification API…
 </div>
 </div>
 
@@ -364,6 +455,10 @@ footer{
 <button id="submitBtn" type="submit">Créer le ticket</button>
 </div>
 </form>
+
+<p class="muted" id="draftHint" style="margin-top:10px;display:none;">
+  Brouillon sauvegardé automatiquement.
+</p>
 </div>
 
 <footer>
@@ -373,9 +468,15 @@ Discord : <a href="https://discord.gg/mnsopti" target="_blank">discord.gg/mnsopt
 
 </div>
 
+<!-- Toast container (Niveau 3) -->
+<div id="toastHost" class="toastHost"></div>
+
 <script>
 const API_URL="https://mnsopti-bot.onrender.com";
 const STORAGE_KEY="mnsopti_tickets_v8";
+
+/* Niveau 3 : autosave du formulaire (brouillon) */
+const DRAFT_KEY="mnsopti_ticket_draft_v1";
 
 const OFFERS=[
  {id:"week",label:"1 semaine",price:5},
@@ -387,13 +488,74 @@ const OFFERS=[
 function openDiscord(){window.open("https://discord.gg/mnsopti","_blank")}
 function scrollToTickets(){document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"})}
 
+/* ==== TOAST (remplace alert) ==== */
+function toast(msg, ms=2400){
+  const host=document.getElementById("toastHost");
+  const t=document.createElement("div");
+  t.className="toast";
+  t.innerHTML=`
+    <div class="txt">${escapeHtml(msg)}</div>
+    <button class="x" aria-label="Fermer">✕</button>
+  `;
+  const close=()=>{ t.style.opacity="0"; t.style.transform="translateY(6px)"; setTimeout(()=>t.remove(), 160); };
+  t.querySelector(".x").addEventListener("click", close);
+  host.appendChild(t);
+  setTimeout(close, ms);
+}
+
+/* ==== Sécurité front : escape (évite injection HTML dans innerHTML) ==== */
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* ==== Autosave brouillon ==== */
+function saveDraft(){
+  const draft={
+    pseudo: pseudo.value,
+    contact: contact.value,
+    subject: subject.value,
+    details: details.value
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  const hint=document.getElementById("draftHint");
+  hint.style.display="block";
+  clearTimeout(saveDraft._t);
+  saveDraft._t=setTimeout(()=>hint.style.display="none", 1400);
+}
+function loadDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");
+    if(!d) return;
+    if(pseudo.value.trim()==="") pseudo.value=d.pseudo||"";
+    if(contact.value.trim()==="") contact.value=d.contact||"";
+    if(subject.value.trim()==="") subject.value=d.subject||"";
+    if(details.value.trim()==="") details.value=d.details||"";
+  }catch{}
+}
+function clearDraft(){
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+/* Petites écoutes autosave (debounce) */
+let draftTimer=null;
+function draftTouch(){
+  clearTimeout(draftTimer);
+  draftTimer=setTimeout(saveDraft, 250);
+}
+
+/* ==== Boutique ==== */
 function renderShop(){
  document.getElementById("shopList").innerHTML=
  OFFERS.map(o=>`
   <div class="shopItem">
-    <div><b>${o.label}</b> <span class="pill">Accès</span></div>
+    <div><b>${escapeHtml(o.label)}</b> <span class="pill">Accès</span></div>
     <div class="shopActions">
-      <div class="price">${o.price} €</div>
+      <div class="price">${escapeHtml(o.price)} €</div>
       <button class="btnSmall" onclick="buyOffer('${o.id}')">Acheter</button>
     </div>
   </div>
@@ -410,8 +572,10 @@ Je souhaite acheter l’offre ${o.label} (${o.price} €).
 Moyen de paiement :
 Pseudo Discord :`;
  scrollToTickets();
+ saveDraft(); // niveau 3 : garde le brouillon
 }
 
+/* ==== Tickets (localStorage) ==== */
 function loadTickets(){
  try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{return[]}
 }
@@ -422,6 +586,17 @@ function saveTickets(list){
 function clearTickets(){
  localStorage.removeItem(STORAGE_KEY);
  renderTickets();
+ toast("🧹 Tickets locaux supprimés.");
+}
+
+/* Copier texte (niveau 3) */
+async function copyText(txt){
+ try{
+  await navigator.clipboard.writeText(txt);
+  toast("✅ Copié dans le presse-papiers");
+ }catch{
+  toast("❌ Impossible de copier");
+ }
 }
 
 function renderTickets(){
@@ -431,29 +606,45 @@ function renderTickets(){
   root.innerHTML='<div class="muted">Aucun ticket enregistré.</div>';
   return;
  }
- root.innerHTML=list.map(t=>`
-  <div class="ticketBox">
-    <div class="ticketTop">
-      <b>${t.subject}</b>
-      <span class="ticketId">${new Date(t.createdAt).toLocaleString()}</span>
+ root.innerHTML=list.map(t=>{
+   const dateStr = new Date(t.createdAt).toLocaleString();
+   const subj = escapeHtml(t.subject);
+   const detailsSafe = escapeHtml(t.details);
+   const hasLink = t.channelUrl && String(t.channelUrl).trim() !== "";
+   const linkHtml = hasLink ? `<a class="linkBtn" href="${escapeHtml(t.channelUrl)}" target="_blank" rel="noopener">Ouvrir le ticket</a>` : "";
+   return `
+    <div class="ticketBox">
+      <div class="ticketTop">
+        <b>${subj}</b>
+        <span class="ticketId">${escapeHtml(dateStr)}</span>
+      </div>
+      <div class="ticketMsg">${detailsSafe}</div>
+      <div class="ticketActions">
+        <a class="linkBtn" href="javascript:void(0)" onclick="copyText(${JSON.stringify(t.details)})">Copier</a>
+        ${linkHtml}
+      </div>
     </div>
-    <div class="ticketMsg">${t.details}</div>
-  </div>
- `).join("");
+   `;
+ }).join("");
 }
 
+/* ==== API status ==== */
 async function checkApi(){
  const el=document.getElementById("apiState");
  try{
   const r=await fetch(API_URL+"/status",{cache:"no-store"});
   const j=await r.json();
-  if(j.online&&j.botReady) el.innerHTML='<span class="statusDot statusOk"></span>API prête';
-  else el.innerHTML='<span class="statusDot statusWarn"></span>API en ligne';
+  if(j.online&&j.botReady){
+    el.innerHTML='<span class="statusDot statusOk"></span>API prête';
+  }else{
+    el.innerHTML='<span class="statusDot statusWarn"></span>API en ligne';
+  }
  }catch{
   el.innerHTML='<span class="statusDot statusBad"></span>API inaccessible';
  }
 }
 
+/* ==== Submit ticket ==== */
 let isSubmitting=false;
 document.getElementById("ticketForm").addEventListener("submit",async e=>{
  e.preventDefault();
@@ -487,19 +678,33 @@ document.getElementById("ticketForm").addEventListener("submit",async e=>{
     channelUrl:j.channelUrl||""
    });
    saveTickets(list);
-   alert("✅ Ticket créé !");
+
+   toast("✅ Ticket créé !");
    if(j.channelUrl) window.open(j.channelUrl,"_blank");
+
    ticketForm.reset();
-  }else alert("❌ "+(j.error||"Erreur"));
- }catch{alert("❌ Erreur réseau")}
+   clearDraft(); // niveau 3 : on vide le brouillon après succès
+  }else{
+   toast("❌ " + (j.error || "Erreur"));
+  }
+ }catch{
+   toast("❌ Erreur réseau");
+ }
  finally{
   isSubmitting=false;
   btn.disabled=false;
  }
 });
 
+/* Autosave listeners */
+["pseudo","contact","subject","details"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", draftTouch);
+});
+
+/* Init */
 renderShop();
 renderTickets();
+loadDraft();
 checkApi();
 setInterval(checkApi,30000);
 </script>
