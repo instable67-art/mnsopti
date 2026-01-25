@@ -7,7 +7,7 @@
 
 <!-- Police moderne (pro) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" additionally crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
@@ -15,13 +15,10 @@
   --bg:#050505;
   --stroke: rgba(255,255,255,.10);
   --stroke2: rgba(255,255,255,.18);
-
   --text:#ffffff;
   --muted: rgba(255,255,255,.62);
-
   --accent:#ffffff;
   --radius:18px;
-
   --shadow: 0 22px 70px rgba(0,0,0,.72);
   --shadow2: 0 14px 36px rgba(0,0,0,.60);
 }
@@ -40,7 +37,6 @@ body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 ::selection{background: rgba(255,255,255,.18); color: #fff}
 
 /* Scrollbar (Chrome/Edge) */
@@ -53,20 +49,21 @@ a{color:#fff;text-decoration:none}
 a:hover{text-decoration:underline}
 
 .wrap{max-width:1100px;margin:0 auto;padding:22px}
+@media(max-width:980px){ .wrap{padding:16px} }
 
-/* ===== HEADER (2 colonnes) ===== */
-.header{
+/* ===== HERO (2 colonnes) ===== */
+.hero{
   display:grid;
-  grid-template-columns: 1.15fr .85fr;
+  grid-template-columns: 1fr 1fr;
   gap:18px;
   align-items:stretch;
   margin-bottom:18px;
 }
 @media(max-width:980px){
-  .header{grid-template-columns:1fr}
-  .wrap{padding:16px}
+  .hero{grid-template-columns:1fr}
 }
 
+/* ===== BRAND ===== */
 .brandBlock{
   text-align:center;
   margin-top:12px;
@@ -85,6 +82,7 @@ a:hover{text-decoration:underline}
   font-size:14px;
 }
 
+/* ===== BANNER ===== */
 .bannerBox{
   width:100%;
   border-radius:22px;
@@ -126,7 +124,6 @@ a:hover{text-decoration:underline}
   transform: translateY(-2px);
   border-color: var(--stroke2);
 }
-
 h2{
   margin:0 0 12px;
   font-size:18px;
@@ -139,15 +136,15 @@ h2{
   line-height:1.45;
 }
 
-/* ===== NIC Description ===== */
-.nicTitle{
+/* ===== HERO SUMMARY LISTS ===== */
+.boxTitleRow{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:10px;
   margin-bottom:10px;
 }
-.nicTag{
+.tag{
   border:1px solid var(--stroke);
   background: rgba(255,255,255,.04);
   border-radius:999px;
@@ -156,15 +153,15 @@ h2{
   color:var(--muted);
   white-space:nowrap;
 }
-.nicList{
+.summaryList{
   margin:0;
   padding-left:16px;
   color: rgba(255,255,255,.82);
   font-size:14px;
   line-height:1.5;
 }
-.nicList li{margin:8px 0}
-.nicFoot{
+.summaryList li{margin:8px 0}
+.hrSoft{
   margin-top:12px;
   padding-top:12px;
   border-top:1px solid var(--stroke);
@@ -172,8 +169,37 @@ h2{
   font-size:13px;
   line-height:1.45;
 }
+.priceGrid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+.priceItem{
+  border:1px solid var(--stroke);
+  background: rgba(0,0,0,.18);
+  border-radius:16px;
+  padding:12px;
+}
+.priceTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.priceName{font-weight:900}
+.priceValue{
+  font-weight:900;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  color:#fff;
+  font-size:13px;
+}
 
-/* ===== GRID MAIN ===== */
+/* ===== MAIN GRID ===== */
 .grid{
   display:grid;
   grid-template-columns:1.1fr .9fr;
@@ -212,7 +238,6 @@ h2{
   border-color: var(--stroke2);
   background: rgba(0,0,0,.28);
 }
-
 .pill{
   border:1px solid var(--stroke);
   background: rgba(255,255,255,.04);
@@ -222,11 +247,7 @@ h2{
   color:var(--muted);
   margin-left:8px;
 }
-.price{
-  font-weight:900;
-  font-size:16px;
-  letter-spacing:.2px;
-}
+.price{font-weight:900;font-size:16px;letter-spacing:.2px}
 .shopActions{display:flex;gap:10px;align-items:center}
 
 /* ===== BUTTONS ===== */
@@ -255,7 +276,6 @@ button:disabled{opacity:.5;cursor:not-allowed;transform:none}
   border-color: var(--stroke2);
   background: rgba(255,255,255,.04);
 }
-
 .btnSmall{padding:10px 12px;border-radius:12px}
 
 button:focus-visible, input:focus-visible, textarea:focus-visible{
@@ -313,7 +333,6 @@ textarea{min-height:120px;resize:vertical}
   white-space:pre-wrap;
   color: rgba(255,255,255,.80);
 }
-
 .ticketActions{
   display:flex;
   gap:10px;
@@ -421,9 +440,10 @@ footer{
 <body>
 <div class="wrap">
 
-<!-- ===== HEADER (banner + description) ===== -->
-<div class="header">
+<!-- ===== HERO ===== -->
+<div class="hero">
 
+  <!-- GAUCHE : banner + résumé services optimisation -->
   <div>
     <div class="bannerBox" id="bannerBtn">
       <img src="banner.png" class="bannerImg" alt="MNS OPTI Banner"
@@ -434,13 +454,67 @@ footer{
       <h1>MNS OPTI</h1>
       <p>Boutique + Tickets → Discord</p>
     </div>
+
+    <div class="card">
+      <div class="boxTitleRow">
+        <h2 style="margin:0">🛠️ Services d’Optimisation</h2>
+        <span class="tag">FPS • Latence • Stabilité</span>
+      </div>
+
+      <p class="muted" style="margin:0 0 10px">
+        Optimisations orientées gaming pour améliorer la fluidité, la réactivité et la stabilité de ton PC,
+        avec options BIOS/Windows/NIC et accompagnement rapide.
+      </p>
+
+      <ul class="summaryList">
+        <li><b>Objectifs</b> : hausse des FPS moyens, amélioration des <b>1% / 0.1% lows</b>, sensation de fluidité accrue.</li>
+        <li><b>Approche</b> : réglages adaptés à ta configuration (matériel + usage), sans “one size fits all”.</li>
+        <li><b>Important</b> : <b>aucun overclock</b> inclus par défaut (ajoutable en option).</li>
+      </ul>
+
+      <div class="priceGrid">
+        <div class="priceItem">
+          <div class="priceTop">
+            <div class="priceName">Réglages BIOS</div>
+            <div class="priceValue">15€</div>
+          </div>
+          <div class="muted" style="margin-top:6px">
+            Optimisation BIOS pour performance globale + stabilité (gaming).
+          </div>
+        </div>
+
+        <div class="priceItem">
+          <div class="priceTop">
+            <div class="priceName">Optimisation Basique</div>
+            <div class="priceValue">25€</div>
+          </div>
+          <div class="muted" style="margin-top:6px">
+            Optimisation Windows pour un système gaming stable (drivers + options utiles).
+          </div>
+        </div>
+
+        <div class="priceItem">
+          <div class="priceTop">
+            <div class="priceName">Optimisation Plus</div>
+            <div class="priceValue">35€</div>
+          </div>
+          <div class="muted" style="margin-top:6px">
+            Optimisation avancée personnalisée (Windows 11 24H2, BIOS avancé, NIC, latence).
+          </div>
+        </div>
+      </div>
+
+      <div class="hrSoft">
+        <b>Overclock (option)</b> : GPU 5€ • CPU 10€ • RAM 15€ — disponible uniquement en complément des réglages BIOS.
+      </div>
+    </div>
   </div>
 
-  <!-- Description NIC à droite -->
+  <!-- DROITE : résumé NIC -->
   <div class="card">
-    <div class="nicTitle">
+    <div class="boxTitleRow">
       <h2 style="margin:0">🧩 MNS NIC</h2>
-      <span class="nicTag">Optimisation • FiveM • Restore</span>
+      <span class="tag">Optimisation • FiveM • Restore</span>
     </div>
 
     <p class="muted" style="margin:0 0 10px">
@@ -448,16 +522,16 @@ footer{
       avec vérifications système, profils, backups et restauration.
     </p>
 
-    <ul class="nicList">
+    <ul class="summaryList">
       <li><b>Accès sécurisé</b> : whitelist UUID + verrouillage par clé + licence (KeyAuth/HWID).</li>
-      <li><b>Profil</b> sauvegardé dans <span class="muted">%ProgramData%\MNSNIC\profile.json</span> + logs/backups.</li>
+      <li><b>Profil</b> : stockage local (<span class="muted">%ProgramData%\MNSNIC</span>) + logs + backups.</li>
       <li><b>Checks</b> : CPU / RAM / Disque / Réseau (rapport rapide).</li>
-      <li><b>Optimisations</b> : nettoyage, flush DNS, ajustements Windows (GameDVR, power plan, TCP, etc.).</li>
+      <li><b>Optimisations</b> : nettoyage, GameDVR OFF, power plan, TCP, etc.</li>
       <li><b>Boost FiveM</b> : priorité/affinité, QoS, réseau, timers (selon mode).</li>
-      <li><b>Restore</b> : rollback via sauvegardes (registre, power plan, services) si disponibles.</li>
+      <li><b>Restore</b> : rollback via sauvegardes (quand dispo).</li>
     </ul>
 
-    <div class="nicFoot">
+    <div class="hrSoft">
       <b>Conseil</b> : certains réglages demandent les droits admin et un redémarrage pour effet complet.
     </div>
   </div>
@@ -466,69 +540,69 @@ footer{
 
 <div class="grid">
 
-<!-- SHOP -->
-<div class="card">
-<h2>🛒 Boutique – MNS NIC</h2>
-<p class="muted">Clique sur “Acheter” pour pré-remplir le ticket</p>
+  <!-- SHOP -->
+  <div class="card">
+    <h2>🛒 Boutique – MNS NIC</h2>
+    <p class="muted">Clique sur “Acheter” pour pré-remplir le ticket</p>
 
-<div id="shopList" class="shopList"></div>
+    <div id="shopList" class="shopList"></div>
 
-<p class="muted" style="margin-top:12px;">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
+    <p class="muted" style="margin-top:12px;">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
 
-<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-  <button onclick="openDiscord()">Acheter via Discord</button>
-  <button class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
-</div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="openDiscord()">Acheter via Discord</button>
+      <button class="btnGhost" onclick="scrollToTickets()">Créer un ticket</button>
+    </div>
 
-<div class="muted" id="apiState" style="margin-top:12px;">
-  <span class="statusDot statusPulse"></span>⏳ Vérification API…
-</div>
-</div>
+    <div class="muted" id="apiState" style="margin-top:12px;">
+      <span class="statusDot statusPulse"></span>⏳ Vérification API…
+    </div>
+  </div>
 
-<!-- LOCAL TICKETS -->
-<div class="card">
-<h2>📌 Mes tickets</h2>
-<p class="muted">Stockés dans ton navigateur</p>
-<div id="ticketsList" class="ticketsList"></div>
+  <!-- LOCAL TICKETS -->
+  <div class="card">
+    <h2>📌 Mes tickets</h2>
+    <p class="muted">Stockés dans ton navigateur</p>
+    <div id="ticketsList" class="ticketsList"></div>
 
-<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-  <button class="btnGhost" onclick="openDiscord()">Aller sur Discord</button>
-  <button class="btnGhost" onclick="clearTickets()">Tout supprimer</button>
-</div>
-</div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btnGhost" onclick="openDiscord()">Aller sur Discord</button>
+      <button class="btnGhost" onclick="clearTickets()">Tout supprimer</button>
+    </div>
+  </div>
 
 </div>
 
 <!-- CREATE TICKET -->
 <div class="card" id="ticketsSection" style="margin-top:18px;">
-<h2>🎫 Créer un ticket</h2>
+  <h2>🎫 Créer un ticket</h2>
 
-<form id="ticketForm">
-<label>Pseudo</label>
-<input id="pseudo" required>
+  <form id="ticketForm">
+    <label>Pseudo</label>
+    <input id="pseudo" required>
 
-<label>Contact</label>
-<input id="contact">
+    <label>Contact</label>
+    <input id="contact">
 
-<label>Sujet</label>
-<input id="subject" required>
+    <label>Sujet</label>
+    <input id="subject" required>
 
-<label>Détails</label>
-<textarea id="details" required></textarea>
+    <label>Détails</label>
+    <textarea id="details" required></textarea>
 
-<div style="margin-top:12px">
-<button id="submitBtn" type="submit">Créer le ticket</button>
-</div>
-</form>
+    <div style="margin-top:12px">
+      <button id="submitBtn" type="submit">Créer le ticket</button>
+    </div>
+  </form>
 
-<p class="muted" id="draftHint" style="margin-top:10px;display:none;">
-  Brouillon sauvegardé automatiquement.
-</p>
+  <p class="muted" id="draftHint" style="margin-top:10px;display:none;">
+    Brouillon sauvegardé automatiquement.
+  </p>
 </div>
 
 <footer>
-Discord : <a href="https://discord.gg/mnsopti" target="_blank" rel="noopener">discord.gg/mnsopti</a><br>
-© 2026 MNS OPTI
+  Discord : <a href="https://discord.gg/mnsopti" target="_blank" rel="noopener">discord.gg/mnsopti</a><br>
+  © 2026 MNS OPTI
 </footer>
 
 </div>
@@ -539,8 +613,6 @@ Discord : <a href="https://discord.gg/mnsopti" target="_blank" rel="noopener">di
 <script>
 const API_URL="https://mnsopti-bot.onrender.com";
 const STORAGE_KEY="mnsopti_tickets_v8";
-
-/* Niveau 3 : autosave du formulaire (brouillon) */
 const DRAFT_KEY="mnsopti_ticket_draft_v1";
 
 const OFFERS=[
@@ -553,7 +625,7 @@ const OFFERS=[
 function openDiscord(){window.open("https://discord.gg/mnsopti","_blank")}
 function scrollToTickets(){document.getElementById("ticketsSection").scrollIntoView({behavior:"smooth"})}
 
-/* ==== TOAST (remplace alert) ==== */
+/* Toast */
 function toast(msg, ms=2400){
   const host=document.getElementById("toastHost");
   const t=document.createElement("div");
@@ -568,7 +640,7 @@ function toast(msg, ms=2400){
   setTimeout(close, ms);
 }
 
-/* ==== Sécurité front : escape (évite injection HTML) ==== */
+/* Anti injection */
 function escapeHtml(str){
   return String(str)
     .replaceAll("&","&amp;")
@@ -578,7 +650,7 @@ function escapeHtml(str){
     .replaceAll("'","&#039;");
 }
 
-/* ==== Autosave brouillon ==== */
+/* Autosave brouillon */
 function saveDraft(){
   const draft={
     pseudo: pseudo.value,
@@ -610,7 +682,7 @@ function draftTouch(){
   draftTimer=setTimeout(saveDraft, 250);
 }
 
-/* ==== Boutique ==== */
+/* Boutique */
 function renderShop(){
  document.getElementById("shopList").innerHTML=
  OFFERS.map(o=>`
@@ -637,7 +709,7 @@ Pseudo Discord :`;
  saveDraft();
 }
 
-/* ==== Tickets (localStorage) ==== */
+/* Tickets */
 function loadTickets(){
  try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{return[]}
 }
@@ -689,7 +761,7 @@ function renderTickets(){
  }).join("");
 }
 
-/* ==== API status ==== */
+/* API status */
 async function checkApi(){
  const el=document.getElementById("apiState");
  try{
@@ -705,7 +777,7 @@ async function checkApi(){
  }
 }
 
-/* ==== Submit ticket ==== */
+/* Submit ticket */
 let isSubmitting=false;
 document.getElementById("ticketForm").addEventListener("submit",async e=>{
  e.preventDefault();
