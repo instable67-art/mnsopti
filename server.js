@@ -15,21 +15,20 @@ import {
 
 const {
   DISCORD_TOKEN,
-  GUILD_ID,
-  TICKETS_CATEGORY_ID,
-  STAFF_ROLE_ID,
-  STAFF_ROLE_ID_2, // ✅ deuxième rôle staff (optionnel)
   PORT = 3000,
   SITE_ORIGIN, // ex: https://instable67-art.github.io
+
+  // IDs (tu peux aussi les mettre en env sur Render)
+  GUILD_ID = "1456686776927260672",
+  TICKETS_CATEGORY_ID = "1464951181645451400",
+  STAFF_ROLE_ID = "1456688625830858813",
+  STAFF_ROLE_ID_2 = "1456688866177187882",
 } = process.env;
 
 if (!DISCORD_TOKEN) {
   console.error("❌ DISCORD_TOKEN manquant");
   process.exit(1);
 }
-if (!GUILD_ID) console.warn("⚠️ GUILD_ID manquant");
-if (!TICKETS_CATEGORY_ID) console.warn("⚠️ TICKETS_CATEGORY_ID manquant");
-if (!STAFF_ROLE_ID) console.warn("⚠️ STAFF_ROLE_ID manquant");
 
 // ---------- Discord Client ----------
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -48,10 +47,10 @@ const app = express();
 app.use(helmet());
 app.use(express.json({ limit: "50kb" }));
 
-// ✅ CORS
+// CORS
 app.use(
   cors({
-    origin: SITE_ORIGIN ? SITE_ORIGIN : true, // si vide -> autorise tout (test)
+    origin: SITE_ORIGIN ? SITE_ORIGIN : true,
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
   })
@@ -60,7 +59,7 @@ app.options("*", cors());
 
 app.use(rateLimit({ windowMs: 60_000, max: 30 }));
 
-// ---------- Health routes ----------
+// ---------- Health ----------
 app.get("/", (req, res) => res.send("OK"));
 
 app.get("/status", (req, res) => {
@@ -84,49 +83,83 @@ function safeChannelName(pseudo, ticketId) {
   return `ticket-${safePseudo}-${ticketId.toLowerCase()}`.slice(0, 95);
 }
 
+function jsonError(res, status, code, message, extra = {}) {
+  return res.status(status).json({ ok: false, code, error: message, ...extra });
+}
+
 // ---------- Ticket endpoint ----------
 app.post("/api/ticket", async (req, res) => {
   try {
     const { pseudo, contact, subject, details } = req.body || {};
 
+    // Validate input
     if (!pseudo || !subject || !details) {
-      return res.status(400).json({ ok: false, error: "Champs manquants" });
+      return jsonError(res, 400, "MISSING_FIELDS", "Champs manquants");
     }
 
+    // Bot ready
     if (!client.isReady()) {
-      return res.status(503).json({
-        ok: false,
-        error: "Bot Discord pas prêt (réessaie dans quelques secondes)",
-      });
+      return jsonError(
+        res,
+        503,
+        "BOT_NOT_READY",
+        "Bot Discord pas prêt (réessaie dans quelques secondes)"
+      );
     }
 
-    if (!GUILD_ID || !TICKETS_CATEGORY_ID || !STAFF_ROLE_ID) {
-      return res.status(500).json({
-        ok: false,
-        error: "Config manquante (GUILD_ID / TICKETS_CATEGORY_ID / STAFF_ROLE_ID)",
-      });
-    }
+    // Fetch guild
+    const guild = await client.guilds.fetch(GUILD_ID).catch((e) => {
+      throw new Error("Impossible de récupérer le serveur (GUILD_ID invalide ?)");
+    });
 
-    const guild = await client.guilds.fetch(GUILD_ID);
-
-    // ✅ Vérifie que la catégorie existe
+    // Fetch category
     const category = await guild.channels.fetch(TICKETS_CATEGORY_ID).catch(() => null);
-    if (!category || category.type !== ChannelType.GuildCategory) {
-      return res.status(500).json({
-        ok: false,
-        error: "TICKETS_CATEGORY_ID invalide (pas une catégorie)",
-      });
+    if (!category) {
+      return jsonError(
+        res,
+        500,
+        "BAD_CATEGORY_ID",
+        "Catégorie introuvable (TICKETS_CATEGORY_ID invalide)"
+      );
+    }
+    if (category.type !== ChannelType.GuildCategory) {
+      return jsonError(
+        res,
+        500,
+        "NOT_A_CATEGORY",
+        "TICKETS_CATEGORY_ID ne pointe pas vers une catégorie"
+      );
+    }
+
+    // Check bot permissions at guild level
+    const me = await guild.members.fetch(client.user.id);
+    const needed = [
+      PermissionsBitField.Flags.ViewChannel,
+      PermissionsBitField.Flags.ManageChannels,
+      PermissionsBitField.Flags.SendMessages,
+      PermissionsBitField.Flags.ReadMessageHistory,
+    ];
+    const missing = needed.filter((p) => !me.permissions.has(p));
+    if (missing.length) {
+      return jsonError(
+        res,
+        500,
+        "MISSING_BOT_PERMS",
+        "Le bot n'a pas les permissions nécessaires (View/ManageChannels/SendMessages/ReadHistory).",
+        { missingPerms: missing.map(String) }
+      );
     }
 
     const ticketId = makeTicketId();
     const channelName = safeChannelName(pseudo, ticketId);
 
-    // ✅ Permissions : tout le monde caché, staff visible, bot visible
+    // Permission overwrites
     const overwrites = [
       {
         id: guild.roles.everyone.id,
         deny: [PermissionsBitField.Flags.ViewChannel],
       },
+      // Staff role 1
       {
         id: STAFF_ROLE_ID,
         allow: [
@@ -137,7 +170,22 @@ app.post("/api/ticket", async (req, res) => {
           PermissionsBitField.Flags.EmbedLinks,
         ],
       },
-      // bot lui-même
+      // Staff role 2 (optionnel)
+      ...(STAFF_ROLE_ID_2
+        ? [
+            {
+              id: STAFF_ROLE_ID_2,
+              allow: [
+                PermissionsBitField.Flags.ViewChannel,
+                PermissionsBitField.Flags.SendMessages,
+                PermissionsBitField.Flags.ReadMessageHistory,
+                PermissionsBitField.Flags.AttachFiles,
+                PermissionsBitField.Flags.EmbedLinks,
+              ],
+            },
+          ]
+        : []),
+      // Bot
       {
         id: client.user.id,
         allow: [
@@ -148,20 +196,6 @@ app.post("/api/ticket", async (req, res) => {
         ],
       },
     ];
-
-    // ✅ 2e rôle staff si fourni
-    if (STAFF_ROLE_ID_2) {
-      overwrites.push({
-        id: STAFF_ROLE_ID_2,
-        allow: [
-          PermissionsBitField.Flags.ViewChannel,
-          PermissionsBitField.Flags.SendMessages,
-          PermissionsBitField.Flags.ReadMessageHistory,
-          PermissionsBitField.Flags.AttachFiles,
-          PermissionsBitField.Flags.EmbedLinks,
-        ],
-      });
-    }
 
     const channel = await guild.channels.create({
       name: channelName,
@@ -182,11 +216,11 @@ app.post("/api/ticket", async (req, res) => {
       .setFooter({ text: "MNS OPTI" })
       .setTimestamp(new Date());
 
-    const staffMentions = [`<@&${STAFF_ROLE_ID}>`];
-    if (STAFF_ROLE_ID_2) staffMentions.push(`<@&${STAFF_ROLE_ID_2}>`);
+    const mentions = [`<@&${STAFF_ROLE_ID}>`];
+    if (STAFF_ROLE_ID_2) mentions.push(`<@&${STAFF_ROLE_ID_2}>`);
 
     await channel.send({
-      content: `${staffMentions.join(" ")} Ticket créé ✅`,
+      content: `${mentions.join(" ")} Ticket créé ✅`,
       embeds: [embed],
     });
 
@@ -196,8 +230,17 @@ app.post("/api/ticket", async (req, res) => {
       channelUrl: `https://discord.com/channels/${GUILD_ID}/${channel.id}`,
     });
   } catch (e) {
-    console.error("❌ /api/ticket error:", e);
-    return res.status(500).json({ ok: false, error: "Erreur serveur" });
+    // Logs détaillés + réponse utile au site
+    console.error("❌ /api/ticket error name:", e?.name);
+    console.error("❌ /api/ticket error message:", e?.message);
+    console.error("❌ /api/ticket error stack:", e?.stack);
+
+    return jsonError(
+      res,
+      500,
+      "SERVER_ERROR",
+      e?.message || "Erreur serveur"
+    );
   }
 });
 
