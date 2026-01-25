@@ -35,12 +35,7 @@
     .wrap{max-width:1100px;margin:0 auto;padding:24px}
 
     /* ===== Header Pro ===== */
-    header{
-      padding:34px 0 18px;
-      text-align:center;
-      position:relative;
-    }
-
+    header{padding:34px 0 18px;text-align:center}
     .hero{
       position:relative;
       width:100%;
@@ -49,11 +44,10 @@
       border-radius:24px;
       overflow:hidden;
       border:1px solid var(--stroke);
-      background: #080808;
-      box-shadow: var(--shadow);
-      transform: translateZ(0);
+      background:#080808;
+      box-shadow:var(--shadow);
+      transform:translateZ(0);
     }
-
     .hero::before{
       content:"";
       position:absolute; inset:0;
@@ -62,7 +56,7 @@
         radial-gradient(700px 260px at 80% 35%, rgba(255,255,255,0.06), transparent 55%);
       pointer-events:none;
       opacity:.9;
-      mix-blend-mode: screen;
+      mix-blend-mode:screen;
     }
 
     .bannerBtn{
@@ -72,21 +66,19 @@
       width:100%;
       position:relative;
     }
-
     .bannerImg{
       width:100%;
       display:block;
       height:auto;
       transform: scale(1.01);
       filter: contrast(1.05) brightness(1.02);
-      transition: transform 600ms ease, filter 600ms ease;
+      transition: transform 650ms cubic-bezier(.2,.8,.2,1), filter 650ms cubic-bezier(.2,.8,.2,1);
       user-select:none;
       -webkit-user-drag:none;
     }
-
     .hero:hover .bannerImg{
-      transform: scale(1.03);
-      filter: contrast(1.08) brightness(1.05);
+      transform: scale(1.035);
+      filter: contrast(1.09) brightness(1.05);
     }
 
     .heroOverlay{
@@ -98,7 +90,7 @@
       padding:18px 18px 16px;
       gap:14px;
       pointer-events:none;
-      background: linear-gradient(180deg, rgba(0,0,0,0.0) 45%, rgba(0,0,0,0.55) 100%);
+      background: linear-gradient(180deg, rgba(0,0,0,0.0) 45%, rgba(0,0,0,0.60) 100%);
     }
 
     .brandRow{
@@ -111,8 +103,7 @@
     .logoBtn{
       all:unset;
       cursor:pointer;
-      width:76px;
-      height:76px;
+      width:76px;height:76px;
       border-radius:18px;
       border:1px solid rgba(255,255,255,0.14);
       background: rgba(0,0,0,0.25);
@@ -122,17 +113,25 @@
       backdrop-filter: blur(8px);
       transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
       position:relative;
+      overflow:hidden;
     }
-
+    .logoBtn::after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.22), transparent 60%);
+      opacity:0;
+      transition:opacity 220ms ease;
+      pointer-events:none;
+    }
     .logoBtn:hover{
       transform: translateY(-2px);
       border-color: rgba(255,255,255,0.25);
       box-shadow: 0 18px 60px rgba(0,0,0,0.65);
     }
+    .logoBtn:hover::after{opacity:1}
 
     .logoImg{
-      width:54px;
-      height:54px;
+      width:54px;height:54px;
       object-fit:contain;
       user-select:none;
       -webkit-user-drag:none;
@@ -140,22 +139,9 @@
       transition: transform 220ms ease;
     }
 
-    .titleBlock{
-      text-align:left;
-      pointer-events:none;
-    }
-
-    .title{
-      margin:0;
-      font-size:30px;
-      letter-spacing:1.2px;
-      line-height:1.05;
-    }
-    .subtitle{
-      margin:6px 0 0;
-      color:var(--muted);
-      font-size:14px;
-    }
+    .titleBlock{ text-align:left; pointer-events:none; }
+    .title{ margin:0; font-size:30px; letter-spacing:1.2px; line-height:1.05; }
+    .subtitle{ margin:6px 0 0; color:var(--muted); font-size:14px; }
 
     .quickActions{
       display:flex;
@@ -192,22 +178,28 @@
     h2{margin:0 0 12px;font-size:18px;letter-spacing:0.2px}
     .muted{color:var(--muted);font-size:14px}
 
+    /* ===== Boutique (dynamique) ===== */
+    .shopList{display:flex;flex-direction:column;gap:10px;margin-top:6px}
     .shopItem{
       display:flex;
       align-items:center;
       justify-content:space-between;
+      gap:12px;
       padding:14px 14px;
       border:1px solid var(--stroke);
       border-radius:14px;
       background: rgba(0,0,0,0.28);
-      margin:10px 0;
-      transition: transform 220ms ease, border-color 220ms ease;
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
     }
     .shopItem:hover{
       transform: translateY(-1px);
       border-color: rgba(255,255,255,0.16);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
     }
-    .shopItem b{font-size:15px}
+    .shopLeft{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    }
+    .shopLeft b{font-size:15px}
     .pill{
       border:1px solid var(--stroke);
       border-radius:999px;
@@ -215,29 +207,59 @@
       font-size:12px;
       color:var(--muted);
     }
+    .priceTag{
+      font-weight:900;
+      letter-spacing:0.2px;
+      font-size:15px;
+      white-space:nowrap;
+    }
+    .shopActions{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    }
 
+    /* ===== Buttons pro ===== */
     button{
       appearance:none;
       border:none;
       border-radius:12px;
       padding:12px 14px;
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
       background:var(--accent);
       color:#000;
-      transition: transform 120ms ease, opacity 160ms ease;
+      transition: transform 120ms ease, opacity 160ms ease, box-shadow 220ms ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
     button:hover{opacity:0.92}
     button:active{transform: translateY(1px)}
     button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+    .btnSmall{ padding:10px 12px; border-radius:12px; font-weight:900; }
     .btnGhost{
       background:transparent;
       color:#fff;
       border:1px solid var(--stroke);
-      font-weight:700;
+      font-weight:800;
+      box-shadow:none;
     }
+    .btnBuy{
+      position:relative;
+      isolation:isolate;
+      overflow:hidden;
+    }
+    .btnBuy::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 20%, rgba(0,0,0,0.25), transparent 60%);
+      transform: translateX(-25%);
+      opacity:0.0;
+      transition: opacity 200ms ease;
+      z-index:-1;
+    }
+    .btnBuy:hover::before{opacity:1}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 
+    /* ===== Form ===== */
     label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
     input, textarea{
       width:100%;
@@ -248,54 +270,34 @@
       background:rgba(0,0,0,0.28);
       color:#fff;
       outline:none;
-      transition: border-color 160ms ease, transform 120ms ease;
+      transition: border-color 160ms ease;
     }
-    input:focus, textarea:focus{
-      border-color: rgba(255,255,255,0.22);
-    }
+    input:focus, textarea:focus{border-color: rgba(255,255,255,0.22)}
     textarea{min-height:110px;resize:vertical}
 
-    .ticketsList{
-      margin-top:10px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .ticketBox{
-      border:1px solid var(--stroke);
-      background:rgba(0,0,0,0.28);
-      border-radius:14px;
-      padding:12px;
-    }
-    .ticketTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+    /* ===== Tickets list ===== */
+    .ticketsList{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+    .ticketBox{border:1px solid var(--stroke);background:rgba(0,0,0,0.28);border-radius:14px;padding:12px}
+    .ticketTop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
     .ticketId{font-size:13px;color:var(--muted)}
-    .ticketMsg{
-      margin:10px 0 0;
-      color:#fff;
-      font-size:14px;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
+    .ticketMsg{margin:10px 0 0;color:#fff;font-size:14px;white-space:pre-wrap;word-break:break-word}
 
-    footer{
-      margin:28px 0 10px;
-      padding:18px 0 0;
-      border-top:1px solid var(--stroke);
-      text-align:center;
-      color:var(--muted);
-      font-size:13px;
-    }
+    footer{margin:28px 0 10px;padding:18px 0 0;border-top:1px solid var(--stroke);text-align:center;color:var(--muted);font-size:13px}
     a{color:#fff}
 
-    /* ===== Animations ===== */
+    /* ===== Status dot ===== */
+    .statusDot{
+      display:inline-block;
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,0.25);
+      margin-right:8px;
+      vertical-align:middle;
+    }
+    .statusOk{ background: rgba(255,255,255,0.95); }
+    .statusWarn{ background: rgba(255,255,255,0.55); }
+    .statusBad{ background: rgba(255,255,255,0.18); }
 
-    /* Logo click: pulse + rotate + glow */
+    /* ===== Animations ===== */
     @keyframes logoClick {
       0%   { transform: translateY(0) rotate(0deg) scale(1); box-shadow: 0 12px 45px rgba(0,0,0,0.55); }
       35%  { transform: translateY(-2px) rotate(-6deg) scale(1.06); box-shadow: 0 0 0 10px rgba(255,255,255,0.06), 0 18px 80px rgba(0,0,0,0.7); }
@@ -307,23 +309,16 @@
       50%  { transform: rotate(18deg) scale(1.06); }
       100% { transform: rotate(0deg) scale(1); }
     }
-    .logoBtn.anim {
-      animation: logoClick 720ms cubic-bezier(.2,.8,.2,1);
-      border-color: rgba(255,255,255,0.28);
-    }
-    .logoBtn.anim .logoImg{
-      animation: logoInner 720ms cubic-bezier(.2,.8,.2,1);
-    }
+    .logoBtn.anim { animation: logoClick 720ms cubic-bezier(.2,.8,.2,1); border-color: rgba(255,255,255,0.28); }
+    .logoBtn.anim .logoImg{ animation: logoInner 720ms cubic-bezier(.2,.8,.2,1); }
 
-    /* Banner click: shimmer + tilt */
     @keyframes bannerFlash {
       0%   { transform: rotate(0deg) scale(1); }
       40%  { transform: rotate(-0.3deg) scale(1.01); }
       100% { transform: rotate(0deg) scale(1); }
     }
-    .hero.anim {
-      animation: bannerFlash 650ms cubic-bezier(.2,.8,.2,1);
-    }
+    .hero.anim { animation: bannerFlash 650ms cubic-bezier(.2,.8,.2,1); }
+
     .shimmer{
       position:absolute;
       inset:-30%;
@@ -346,17 +341,13 @@
       100%{ transform: translateX(80%) rotate(10deg); }
     }
 
-    /* little status dot */
-    .statusDot{
-      display:inline-block;
-      width:8px;height:8px;border-radius:999px;
-      background: rgba(255,255,255,0.25);
-      margin-right:8px;
-      vertical-align:middle;
+    /* micro feedback on "Acheter" */
+    @keyframes pop {
+      0%{ transform: translateY(0) scale(1); }
+      40%{ transform: translateY(-1px) scale(1.04); }
+      100%{ transform: translateY(0) scale(1); }
     }
-    .statusOk{ background: rgba(255,255,255,0.95); }
-    .statusWarn{ background: rgba(255,255,255,0.55); }
-    .statusBad{ background: rgba(255,255,255,0.18); }
+    .btnBuy.pop{ animation: pop 360ms cubic-bezier(.2,.8,.2,1); }
   </style>
 </head>
 
@@ -367,18 +358,16 @@
       <div class="hero" id="hero">
         <div class="shimmer"></div>
 
-        <!-- Bannière cliquable -->
         <button class="bannerBtn" id="bannerBtn" type="button" aria-label="Bannière MNS OPTI">
           <img class="bannerImg" src="banner.png" alt="MNS OPTI Banner"
-               onerror="this.style.display='none'; this.closest('.hero').style.padding='26px'; this.closest('.hero').innerHTML='<div style=&quot;color:#fff;font-weight:800;font-size:22px;text-align:center;padding:22px;&quot;>MNS OPTI</div><div style=&quot;color:#b9b9b9;text-align:center;padding-bottom:22px;&quot;>Ajoute <b>banner.png</b> dans le repo</div>';"/>
+            onerror="this.style.display='none'; this.closest('.hero').style.padding='26px'; this.closest('.hero').innerHTML='<div style=&quot;color:#fff;font-weight:800;font-size:22px;text-align:center;padding:22px;&quot;>MNS OPTI</div><div style=&quot;color:#b9b9b9;text-align:center;padding-bottom:22px;&quot;>Ajoute <b>banner.png</b> dans le repo</div>';"/>
         </button>
 
         <div class="heroOverlay">
           <div class="brandRow">
-            <!-- Logo cliquable -->
             <button class="logoBtn" id="logoBtn" type="button" aria-label="Logo MNS OPTI">
               <img class="logoImg" src="logo.png" alt="MNS OPTI Logo"
-                   onerror="this.style.display='none'; this.parentElement.textContent='M'; this.parentElement.style.fontWeight='900'; this.parentElement.style.fontSize='28px';"/>
+                onerror="this.style.display='none'; this.parentElement.textContent='M'; this.parentElement.style.fontWeight='900'; this.parentElement.style.fontSize='28px';"/>
             </button>
 
             <div class="titleBlock">
@@ -388,8 +377,8 @@
           </div>
 
           <div class="quickActions">
-            <button type="button" class="btnGhost" id="goDiscordTop">Discord</button>
-            <button type="button" id="goTicketsTop">Créer un ticket</button>
+            <button type="button" class="btnGhost btnSmall" id="goDiscordTop">Discord</button>
+            <button type="button" class="btnSmall" id="goTicketsTop">Créer un ticket</button>
           </div>
         </div>
       </div>
@@ -398,29 +387,16 @@
     <div class="grid">
       <div class="card">
         <h2>🛒 Boutique – MNS NIC</h2>
+        <p class="muted" style="margin-top:-6px;">Choisis une offre : le ticket se pré-remplit automatiquement.</p>
 
-        <div class="shopItem">
-          <div><b>1 semaine</b> <span class="pill">Accès</span></div>
-          <div><b>6€</b></div>
-        </div>
-        <div class="shopItem">
-          <div><b>1 mois</b> <span class="pill">Accès</span></div>
-          <div><b>12€</b></div>
-        </div>
-        <div class="shopItem">
-          <div><b>3 mois</b> <span class="pill">Accès</span></div>
-          <div><b>24€</b></div>
-        </div>
-        <div class="shopItem">
-          <div><b>1 an</b> <span class="pill">Accès</span></div>
-          <div><b>45€</b></div>
-        </div>
+        <!-- Liste dynamique -->
+        <div id="shopList" class="shopList"></div>
 
-        <p class="muted">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
+        <p class="muted" style="margin-top:12px;">Paiements acceptés : <b>PayPal / Crypto / Carte</b></p>
 
         <div class="btnRow">
-          <button type="button" id="buyBtn">Acheter via Discord</button>
-          <button type="button" class="btnGhost" id="ticketBtn">Créer un ticket</button>
+          <button type="button" class="btnGhost" id="browseDiscordBtn">Voir sur Discord</button>
+          <button type="button" id="createTicketBtn">Créer un ticket</button>
         </div>
 
         <div class="muted" id="apiState" style="margin-top:12px;">
@@ -477,8 +453,16 @@
     // =============================
     // CONFIG
     // =============================
-    const API_URL = "https://mnsopti-bot.onrender.com"; // <-- change si ton Render a une autre URL
-    const STORAGE_KEY = "mnsopti_tickets_v5";
+    const API_URL = "https://mnsopti-bot.onrender.com"; // change si besoin
+    const STORAGE_KEY = "mnsopti_tickets_v6";
+
+    // ✅ PRIX DYNAMIQUES (change ici et tout s'update)
+    const OFFERS = [
+      { id:"week",     label:"1 semaine",  price: 5,  tag:"Accès" },
+      { id:"month",    label:"1 mois",     price: 10, tag:"Accès" },
+      { id:"3months",  label:"3 mois",     price: 15, tag:"Accès" },
+      { id:"lifetime", label:"Lifetime",   price: 25, tag:"Accès" },
+    ];
 
     // =============================
     // Helpers
@@ -494,6 +478,13 @@
       .replaceAll('"',"&quot;")
       .replaceAll("'","&#039;");
 
+    function playAnim(el, cls){
+      el.classList.remove(cls);
+      void el.offsetWidth;
+      el.classList.add(cls);
+      el.addEventListener("animationend", () => el.classList.remove(cls), { once:true });
+    }
+
     function loadTickets(){
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
       catch { return []; }
@@ -503,6 +494,73 @@
       renderTickets();
     }
 
+    // =============================
+    // Boutique dynamique + bouton acheter
+    // =============================
+    function formatPriceEUR(n){
+      // 5 -> "5 €"
+      return `${Number(n)} €`;
+    }
+
+    function buyOffer(offerId){
+      const offer = OFFERS.find(o => o.id === offerId);
+      if(!offer) return;
+
+      // animation sur le bouton cliqué
+      const btn = document.querySelector(`[data-buy="${offerId}"]`);
+      if(btn){
+        btn.classList.remove("pop");
+        void btn.offsetWidth;
+        btn.classList.add("pop");
+        btn.addEventListener("animationend", () => btn.classList.remove("pop"), { once:true });
+      }
+
+      // Pré-remplit le formulaire ticket
+      $("subject").value = `Achat - ${offer.label} (${formatPriceEUR(offer.price)})`;
+      $("details").value =
+`Bonjour,
+Je voudrais acheter l’offre : ${offer.label} (${formatPriceEUR(offer.price)}).
+
+Moyen de paiement : (PayPal / Crypto / Carte)
+Pseudo Discord : 
+Infos supplémentaires :`;
+
+      scrollToTickets();
+      // focus sur pseudo si vide, sinon sur contact
+      setTimeout(() => {
+        if(!$("pseudo").value.trim()) $("pseudo").focus();
+        else $("contact").focus();
+      }, 250);
+    }
+
+    function renderShop(){
+      const root = $("shopList");
+      if(!root) return;
+
+      root.innerHTML = OFFERS.map(o => `
+        <div class="shopItem">
+          <div class="shopLeft">
+            <div><b>${esc(o.label)}</b> <span class="pill">${esc(o.tag || "Accès")}</span></div>
+            <div class="muted" style="font-size:12px;">Support + activation rapide</div>
+          </div>
+
+          <div class="shopActions">
+            <div class="priceTag">${formatPriceEUR(o.price)}</div>
+            <button type="button" class="btnSmall btnBuy" data-buy="${esc(o.id)}">Acheter</button>
+          </div>
+        </div>
+      `).join("");
+
+      // bind buttons
+      OFFERS.forEach(o => {
+        const btn = document.querySelector(`[data-buy="${o.id}"]`);
+        if(btn) btn.addEventListener("click", () => buyOffer(o.id));
+      });
+    }
+
+    // =============================
+    // Tickets list
+    // =============================
     function renderTickets(){
       const root = $("ticketsList");
       if(!root) return;
@@ -526,8 +584,8 @@
           <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">Contact: ${esc(t.contact || "—")}</div>
 
           <div class="btnRow" style="margin-top:10px;">
-            <button type="button" class="btnGhost" onclick="window.open('${esc(t.channelUrl || "")}','_blank')">Ouvrir sur Discord</button>
-            <button type="button" class="btnGhost" onclick="(function(){ const list=loadTickets().filter(x=>x.id!=='${esc(t.id)}'); saveTickets(list); })()">Supprimer local</button>
+            <button type="button" class="btnGhost btnSmall" onclick="window.open('${esc(t.channelUrl || "")}','_blank')">Ouvrir sur Discord</button>
+            <button type="button" class="btnGhost btnSmall" onclick="(function(){ const list=loadTickets().filter(x=>x.id!=='${esc(t.id)}'); saveTickets(list); })()">Supprimer local</button>
           </div>
         </div>
       `).join("");
@@ -540,62 +598,43 @@
       const el = $("apiState");
       if(!el) return;
 
-      const dot = el.querySelector(".statusDot");
-      const setDot = (cls) => {
-        if(!dot) return;
-        dot.className = "statusDot " + cls;
+      const set = (cls, txt) => {
+        el.innerHTML = `<span class="statusDot ${cls}"></span>${txt}`;
       };
 
       try{
         const r = await fetch(API_URL + "/status", { cache:"no-store" });
         const j = await r.json().catch(()=> ({}));
         if(j.online === true && j.botReady === true){
-          setDot("statusOk");
-          el.innerHTML = '<span class="statusDot statusOk"></span>✅ API en ligne (bot prêt)';
+          set("statusOk", "✅ API en ligne (bot prêt)");
         } else if (j.online === true){
-          setDot("statusWarn");
-          el.innerHTML = '<span class="statusDot statusWarn"></span>⚠️ API en ligne (bot pas prêt)';
+          set("statusWarn", "⚠️ API en ligne (bot pas prêt)");
         } else {
-          setDot("statusBad");
-          el.innerHTML = '<span class="statusDot statusBad"></span>❌ API inaccessible';
+          set("statusBad", "❌ API inaccessible");
         }
       }catch{
-        setDot("statusBad");
-        el.innerHTML = '<span class="statusDot statusBad"></span>❌ API inaccessible';
+        set("statusBad", "❌ API inaccessible");
       }
     }
 
     // =============================
-    // Animations (click)
+    // Animations click logo/banner
     // =============================
-    function playAnim(el, cls){
-      el.classList.remove(cls);
-      // force reflow
-      void el.offsetWidth;
-      el.classList.add(cls);
-      el.addEventListener("animationend", () => el.classList.remove(cls), { once:true });
-    }
-
-    $("logoBtn").addEventListener("click", () => {
-      playAnim($("logoBtn"), "anim");
-      // petit easter: ouvre discord si double click
-    });
-
-    $("bannerBtn").addEventListener("click", () => {
-      playAnim($("hero"), "anim");
-    });
+    $("logoBtn").addEventListener("click", () => playAnim($("logoBtn"), "anim"));
+    $("bannerBtn").addEventListener("click", () => playAnim($("hero"), "anim"));
 
     // =============================
-    // Init buttons
+    // Buttons init
     // =============================
-    $("buyBtn").onclick = openDiscord;
-    $("ticketBtn").onclick = scrollToTickets;
-    $("discordBtn").onclick = openDiscord;
-    $("clearBtn").onclick = () => { localStorage.removeItem(STORAGE_KEY); renderTickets(); };
-    $("resetBtn").onclick = () => $("ticketForm").reset();
+    $("browseDiscordBtn").onclick = openDiscord;
+    $("createTicketBtn").onclick = scrollToTickets;
 
     $("goDiscordTop").onclick = openDiscord;
     $("goTicketsTop").onclick = scrollToTickets;
+
+    $("discordBtn").onclick = openDiscord;
+    $("clearBtn").onclick = () => { localStorage.removeItem(STORAGE_KEY); renderTickets(); };
+    $("resetBtn").onclick = () => $("ticketForm").reset();
 
     // =============================
     // Ticket submit (ANTI DOUBLON)
@@ -616,7 +655,7 @@
         contact: $("contact").value.trim(),
         subject: $("subject").value.trim(),
         details: $("details").value.trim(),
-        // ✅ clé unique côté serveur (évite 2/3/4 tickets même si retry)
+        // ✅ idempotency key: même si retry/4 requêtes => 1 ticket côté serveur
         idempotencyKey: (crypto?.randomUUID ? crypto.randomUUID() : ("k_" + Math.random().toString(36).slice(2) + Date.now()))
       };
 
@@ -657,7 +696,10 @@
       }
     });
 
-    // init
+    // =============================
+    // Init
+    // =============================
+    renderShop();
     renderTickets();
     checkApi();
     setInterval(checkApi, 30000);
