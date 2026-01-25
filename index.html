@@ -700,6 +700,184 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(checkApi, 30000);
 });
 </script>
+<!-- ===== SCRIPT TICKETS (NE PAS DUPLIQUER) ===== -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // ⛔ empêche exécution multiple (corrige tickets x2/x3)
+  if (window.__MNS_TICKET_SCRIPT_LOADED__) return;
+  window.__MNS_TICKET_SCRIPT_LOADED__ = true;
+
+  const API_URL = "https://mnsopti-bot.onrender.com";
+  const STORAGE_KEY = "mnsopti_tickets_v3";
+
+  window.openDiscord = () => window.open("https://discord.gg/mnsopti", "_blank");
+  window.scrollToTickets = () => {
+    const el = document.getElementById("ticketsSection");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function loadTickets(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+    catch { return []; }
+  }
+  function saveTickets(list){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    renderTickets();
+  }
+
+  window.clearTickets = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    renderTickets();
+  };
+  window.removeTicket = (id) => {
+    saveTickets(loadTickets().filter(t => t.id !== id));
+  };
+  window.openTicketChannel = (url) => {
+    if (url) window.open(url, "_blank");
+  };
+
+  function updateTicket(id, patch){
+    const list = loadTickets();
+    const i = list.findIndex(t => t.id === id);
+    if(i === -1) return;
+    list[i] = { ...list[i], ...patch };
+    saveTickets(list);
+  }
+
+  window.closeTicket = async (ticketId) => {
+    const t = loadTickets().find(x => x.id === ticketId);
+    if(!t || t.status === "closed") return;
+    if(!confirm("Fermer ce ticket ?")) return;
+
+    updateTicket(ticketId, { status: "closing" });
+    try{
+      const res = await fetch(API_URL + "/api/ticket/close", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ id: ticketId })
+      });
+      const json = await res.json().catch(()=> ({}));
+      if(res.ok && json.ok){
+        updateTicket(ticketId, { status: "closed" });
+        alert("✅ Ticket fermé.");
+      } else {
+        updateTicket(ticketId, { status: "open" });
+        alert("❌ " + (json.error || "Erreur"));
+      }
+    }catch{
+      updateTicket(ticketId, { status: "open" });
+      alert("❌ Erreur réseau");
+    }
+  };
+
+  function renderTickets(){
+    const root = document.getElementById("ticketsList");
+    if(!root) return;
+    const list = loadTickets();
+    if(!list.length){
+      root.innerHTML = '<div class="muted">Aucun ticket enregistré.</div>';
+      return;
+    }
+    root.innerHTML = list.map(t => `
+      <div class="ticketBox">
+        <div class="ticketTop">
+          <div><b>${escapeHtml(t.subject || "Ticket")}</b></div>
+          <div class="ticketId">
+            ID: <b>${escapeHtml(t.id)}</b> • ${new Date(t.createdAt).toLocaleString()}
+            • <b>${escapeHtml(t.status || "open")}</b>
+          </div>
+        </div>
+        <div class="ticketMsg">${escapeHtml(t.details || "")}</div>
+        <div class="ticketMsg" style="color:#b9b9b9;margin-top:8px;">
+          Contact: ${escapeHtml(t.contact || "—")}
+        </div>
+        <div class="btnRow" style="margin-top:10px;">
+          <button type="button" class="btnGhost"
+            onclick="openTicketChannel('${escapeHtml(t.channelUrl || "")}')">
+            Ouvrir sur Discord
+          </button>
+          <button type="button" class="btnGhost"
+            onclick="closeTicket('${escapeHtml(t.id)}')"
+            ${t.status === "closed" ? "disabled" : ""}>
+            Fermer le ticket
+          </button>
+          <button type="button" class="btnGhost"
+            onclick="removeTicket('${escapeHtml(t.id)}')">
+            Supprimer local
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  const ticketForm = document.getElementById("ticketForm");
+  let isSubmitting = false;
+
+  if(ticketForm){
+    ticketForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if(isSubmitting) return;
+      isSubmitting = true;
+
+      const btn = ticketForm.querySelector('button[type="submit"]');
+      if(btn){ btn.disabled = true; btn.textContent = "Envoi..."; }
+
+      const data = {
+        pseudo: document.getElementById("pseudo")?.value.trim() || "",
+        contact: document.getElementById("contact")?.value.trim() || "",
+        subject: document.getElementById("subject")?.value.trim() || "",
+        details: document.getElementById("details")?.value.trim() || ""
+      };
+
+      try{
+        const res = await fetch(API_URL + "/api/ticket", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        });
+        const json = await res.json().catch(()=> ({}));
+        if(res.ok && json.ok){
+          const id = json.id || ("MNS-" + Math.random().toString(36).slice(2,10).toUpperCase());
+          const list = loadTickets();
+          list.unshift({
+            id,
+            subject: data.subject,
+            details: data.details,
+            contact: data.contact,
+            createdAt: Date.now(),
+            status: "open",
+            channelUrl: json.channelUrl || ""
+          });
+          saveTickets(list);
+          alert("✅ Ticket créé ! ID: " + id);
+          if(json.channelUrl) window.open(json.channelUrl, "_blank");
+          ticketForm.reset();
+          window.scrollToTickets();
+        } else {
+          alert("❌ " + (json.error || "Erreur"));
+        }
+      } catch {
+        alert("❌ Erreur réseau");
+      } finally {
+        isSubmitting = false;
+        if(btn){ btn.disabled = false; btn.textContent = "Créer le ticket"; }
+      }
+    });
+  }
+
+  renderTickets();
+});
+</script>
+<!-- ===== FIN SCRIPT TICKETS ===== -->
 
 </body>
 </html>
