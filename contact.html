@@ -1,1 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PHANTOM — Contact</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg0:#050511;
+  --bg1:#07081a;
+  --text:#ffffff;
+  --muted: rgba(255,255,255,.70);
+  --stroke: rgba(255,255,255,.12);
+  --panel: rgba(255,255,255,.06);
+  --accent:#7C5CFF;
+  --accent2:#A855F7;
+  --radius:20px;
+  --shadow: 0 25px 90px rgba(0,0,0,.65);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(124,92,255,.30), transparent 60%),
+    radial-gradient(1000px 700px at 80% 28%, rgba(168,85,247,.22), transparent 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+
+.container{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* HEADER */
+.top{
+  padding: 30px 0 20px;
+  text-align:center;
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+
+.logoDot{
+  width:42px;
+  height:42px;
+  border-radius:16px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: 0 16px 45px rgba(124,92,255,.35);
+}
+
+h1{
+  margin:0;
+  letter-spacing:6px;
+  font-size:42px;
+}
+
+/* NAV */
+.nav{
+  margin-top:12px;
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.nav a{
+  padding:10px 18px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:600;
+  color:white;
+  text-decoration:none;
+  background: rgba(255,255,255,0.06);
+  border:1px solid var(--stroke);
+  transition: .2s;
+}
+
+.nav a:hover{
+  background: rgba(255,255,255,0.12);
+}
+
+.nav .active{
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border:none;
+}
+
+/* SECTION */
+.section{
+  padding: 40px 0;
+}
+
+.section h2{
+  margin:0 0 10px;
+  font-size:26px;
+}
+
+.section p{
+  margin:0;
+  color:var(--muted);
+}
+
+/* CARD */
+.card{
+  margin-top:16px;
+  background: var(--panel);
+  border:1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card p{
+  margin:0;
+  line-height:1.8;
+  font-weight:700;
+}
+
+/* FOOTER */
+.footer{
+  margin-top:40px;
+  padding:20px 0;
+  border-top:1px solid rgba(255,255,255,.1);
+  text-align:center;
+  font-size:13px;
+  color: rgba(255,255,255,.65);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="top">
+    <div class="brand">
+      <div class="logoDot"></div>
+      <h1>PHANTOM</h1>
+
+      <div class="nav">
+        <a href="index.html">Accueil</a>
+        <a href="produits.html">Produits</a>
+        <a href="contact.html" class="active">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTACT -->
+  <section class="section">
+    <h2>Contact</h2>
+    <p>Besoin d’aide ou envie de commander ? Contacte-nous ici.</p>
+
+    <div class="card">
+      <p>
+        💬 <b>Discord :</b> discord.gg/tonlien<br><br>
+        🛠️ <b>Support :</b> ouvre un ticket sur le serveur Discord<br><br>
+        ⏱️ <b>Disponibilité :</b> 24h / 7j
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    © <span id="year"></span> PHANTOM
+  </footer>
+
+</div>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
 
