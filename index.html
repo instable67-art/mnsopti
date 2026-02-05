@@ -29,14 +29,34 @@
   --shadowGlow: 0 0 140px rgba(124,92,255,.28);
 }
 
-/* ✅ AJOUT: conteneur de la "top bar" (rien d'autre) */
+*{box-sizing:border-box}
+html,body{height:100%}
+
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(124,92,255,.30), transparent 60%),
+    radial-gradient(1000px 700px at 80% 28%, rgba(168,85,247,.22), transparent 55%),
+    radial-gradient(900px 600px at 55% 95%, rgba(0,212,255,.12), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow-x:hidden;
+}
+
+.container{
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ✅ top bar */
 .top-bar{
   margin-top: 10px;
   display:flex;
   justify-content:center;
 }
 
-/* boutons */
 .top-actions{
   display: flex;
   gap: 14px;
@@ -69,28 +89,7 @@
   border: none;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-
-body{
-  margin:0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  color:var(--text);
-  background:
-    radial-gradient(1200px 700px at 20% 10%, rgba(124,92,255,.30), transparent 60%),
-    radial-gradient(1000px 700px at 80% 28%, rgba(168,85,247,.22), transparent 55%),
-    radial-gradient(900px 600px at 55% 95%, rgba(0,212,255,.12), transparent 60%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
-  overflow-x:hidden;
-}
-
-.container{
-  max-width: 1150px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* top bar */
+/* top */
 .top{
   padding: 28px 0 10px;
   text-align:center;
@@ -336,6 +335,98 @@ h1{
   font-size: 14px;
 }
 
+/* ✅ Produits */
+.productsGrid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 900px){
+  .productsGrid{grid-template-columns:1fr}
+}
+
+.productHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom: 10px;
+}
+
+.productTitle{
+  font-size: 16px;
+  font-weight: 900;
+  margin:0;
+}
+
+.pricePill{
+  white-space:nowrap;
+  font-weight: 900;
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+
+.productDesc{
+  margin: 0 0 12px;
+  color: rgba(255,255,255,.80);
+  line-height: 1.6;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.list{
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(255,255,255,.78);
+  line-height: 1.7;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.sep{
+  margin: 14px 0 10px;
+  height:1px;
+  background: rgba(255,255,255,.10);
+}
+
+.payTitle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 900;
+  color: rgba(255,255,255,.88);
+  font-size: 13px;
+  margin:0 0 6px;
+}
+
+.payList{
+  margin:0;
+  padding-left: 18px;
+  color: rgba(255,255,255,.78);
+  line-height: 1.7;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.ticketNote{
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(255,255,255,.65);
+  font-weight: 800;
+}
+
+.productActions{
+  margin-top: 12px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
 .footer{
   padding: 22px 0 38px;
   border-top:1px solid rgba(255,255,255,.08);
@@ -348,7 +439,7 @@ h1{
 <body>
 
 <div class="container">
-  <header class="top">
+  <header class="top" id="Accueil">
     <div class="brand">
       <div class="logoDot"></div>
       <h1>PHANTOM</h1>
@@ -366,7 +457,6 @@ h1{
 
   <section class="hero">
     <div class="heroBox">
-      <!-- ✅ GitHub Pages: image à la racine -->
       <div id="heroMedia" class="heroMedia" role="button" tabindex="0" aria-label="Animation bannière (clique)">
         <img src="phantom-banner.png" alt="PHANTOM Banner">
         <div class="heroOverlay"></div>
@@ -380,7 +470,7 @@ h1{
           Un design noir/violet, une bannière impactante, et une base propre pour ajouter tes sections (boutique, services, contact).
         </p>
         <div class="actions">
-          <a class="btn primary" href="#about">Découvrir</a>
+          <a class="btn primary" href="#produits">Voir les Produits</a>
           <a class="btn" href="#features">Avantages</a>
         </div>
 
@@ -413,13 +503,242 @@ h1{
         <p>Livraison Rapide et en Main Propre.</p>
       </div>
       <div class="card feature">
-        <h4>✨ Lobby GTAV Pro</h4>
+        <h4>✨ Service Pro</h4>
         <p>Nous avons de l'expérience dans notre domaine, donc pas d'inquiétude.</p>
       </div>
       <div class="card feature">
         <h4>📱 Avancement</h4>
         <p>Avec ce que nous proposons, vous aurez 100% de meilleurs statistiques qu'avant sur votre compte !</p>
       </div>
+    </div>
+  </section>
+
+  <!-- ✅ NOUVELLE SECTION PRODUITS (sans photos) -->
+  <section class="section" id="produits">
+    <div class="sectionTitle">
+      <h3>Produits</h3>
+      <p>Choisis ton pack. (Texte modifiable : tu peux remplacer par tes descriptions finales.)</p>
+    </div>
+
+    <div class="productsGrid">
+
+      <!-- Produit 1 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Starter</h4>
+          <div class="pricePill">6,50€</div>
+        </div>
+        <p class="productDesc">Description ici (remplace par ton texte).</p>
+        <ul class="list">
+          <li>Contenu / avantage 1</li>
+          <li>Contenu / avantage 2</li>
+          <li>Contenu / avantage 3</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList">
+          <li>Paypal</li>
+          <li>Carte Bancaire</li>
+          <li>Crypto</li>
+        </ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+
+        <div class="productActions">
+          <a class="btn primary" href="#contact">Acheter</a>
+          <a class="btn" href="#contact">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Produit 2 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Confort</h4>
+          <div class="pricePill">9,50€</div>
+        </div>
+        <p class="productDesc">Description ici (remplace par ton texte).</p>
+        <ul class="list">
+          <li>Contenu / avantage 1</li>
+          <li>Contenu / avantage 2</li>
+          <li>Contenu / avantage 3</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList">
+          <li>Paypal</li>
+          <li>Carte Bancaire</li>
+          <li>Crypto</li>
+        </ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+
+        <div class="productActions">
+          <a class="btn primary" href="#contact">Acheter</a>
+          <a class="btn" href="#contact">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Produit 3 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Boost</h4>
+          <div class="pricePill">13€</div>
+        </div>
+        <p class="productDesc">Description ici (remplace par ton texte).</p>
+        <ul class="list">
+          <li>Contenu / avantage 1</li>
+          <li>Contenu / avantage 2</li>
+          <li>Contenu / avantage 3</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList">
+          <li>Paypal</li>
+          <li>Carte Bancaire</li>
+          <li>Crypto</li>
+        </ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+
+        <div class="productActions">
+          <a class="btn primary" href="#contact">Acheter</a>
+          <a class="btn" href="#contact">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Produit 4 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Premium</h4>
+          <div class="pricePill">17€</div>
+        </div>
+        <p class="productDesc">Description ici (remplace par ton texte).</p>
+        <ul class="list">
+          <li>Contenu / avantage 1</li>
+          <li>Contenu / avantage 2</li>
+          <li>Contenu / avantage 3</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList">
+          <li>Paypal</li>
+          <li>Carte Bancaire</li>
+          <li>Crypto</li>
+        </ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+
+        <div class="productActions">
+          <a class="btn primary" href="#contact">Acheter</a>
+          <a class="btn" href="#contact">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Produit 5 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Maximum</h4>
+          <div class="pricePill">35€</div>
+        </div>
+        <p class="productDesc">Description ici (remplace par ton texte).</p>
+        <ul class="list">
+          <li>Contenu / avantage 1</li>
+          <li>Contenu / avantage 2</li>
+          <li>Contenu / avantage 3</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList">
+          <li>Paypal</li>
+          <li>Carte Bancaire</li>
+          <li>Crypto</li>
+        </ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+
+        <div class="productActions">
+          <a class="btn primary" href="#contact">Acheter</a>
+          <a class="btn" href="#contact">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Produit 6 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Ultra Premium</h4>
+          <div class="pricePill">60€</div>
+        </div>
+        <p class="productDesc">Description ici (remplace par ton texte).</p>
+        <ul class="list">
+          <li>Contenu / avantage 1</li>
+          <li>Contenu / avantage 2</li>
+          <li>Contenu / avantage 3</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList">
+          <li>Paypal</li>
+          <li>Carte Bancaire</li>
+          <li>Crypto</li>
+        </ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+
+        <div class="productActions">
+          <a class="btn primary" href="#contact">Acheter</a>
+          <a class="btn" href="#contact">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Produit 7 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Universal</h4>
+          <div class="pricePill">80€</div>
+        </div>
+        <p class="productDesc">Description ici (remplace par ton texte).</p>
+        <ul class="list">
+          <li>Contenu / avantage 1</li>
+          <li>Contenu / avantage 2</li>
+          <li>Contenu / avantage 3</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList">
+          <li>Paypal</li>
+          <li>Carte Bancaire</li>
+          <li>Crypto</li>
+        </ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+
+        <div class="productActions">
+          <a class="btn primary" href="#contact">Acheter</a>
+          <a class="btn" href="#contact">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ✅ CONTACT -->
+  <section class="section" id="contact">
+    <div class="sectionTitle">
+      <h3>Contact</h3>
+      <p>Écris-nous sur Discord pour commander ou poser une question.</p>
+    </div>
+    <div class="card">
+      <p style="margin:0; line-height:1.65; color: rgba(255,255,255,.82); font-weight:700;">
+        Discord : <span style="color: rgba(255,255,255,.92);">Discord.gg/phantomgtavlobby</span><br>
+        Support : ouvre un ticket sur le serveur.
+      </p>
     </div>
   </section>
 
