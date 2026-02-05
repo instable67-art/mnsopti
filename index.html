@@ -28,6 +28,36 @@
   --shadow: 0 25px 90px rgba(0,0,0,.65);
   --shadowGlow: 0 0 140px rgba(124,92,255,.28);
 }
+.top-actions{
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-btn{
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(10px);
+  transition: all .25s ease;
+}
+
+.nav-btn:hover{
+  background: rgba(255,255,255,0.12);
+  transform: translateY(-1px);
+}
+
+.nav-btn.accent{
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: var(--shadow);
+  border: none;
+}
 
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -312,7 +342,14 @@ h1{
     <div class="brand">
       <div class="logoDot"></div>
       <h1>PHANTOM</h1>
-      <p class="subtitle">Vitrine premium • Identité sombre • Expérience haut de gamme</p>
+      <div class="top-bar">
+  <div class="top-actions">
+    <a href="#produits" class="nav-btn">Produits</a>
+    <a href="#offre" class="nav-btn accent">Offre</a>
+    <a href="#contact" class="nav-btn">Contact</a>
+  </div>
+</div>
+
     </div>
   </header>
 
