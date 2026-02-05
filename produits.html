@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PHANTOM — Contact</title>
+<title>PHANTOM — Produits</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,6 +63,38 @@ h1{margin:0;letter-spacing:6px;font-size:44px;text-shadow:0 0 30px rgba(124,92,2
 .card{background: var(--panel);border:1px solid var(--stroke);border-radius: var(--radius);padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
 .footer{padding:22px 0 38px;border-top:1px solid rgba(255,255,255,.08);color: rgba(255,255,255,.65);font-size:13px}
 @media (max-width: 900px){ h1{font-size:36px;letter-spacing:4px} }
+
+/* produits */
+.productsGrid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+@media (max-width: 900px){ .productsGrid{grid-template-columns:1fr} }
+
+.productHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.productTitle{font-size:16px;font-weight:900;margin:0}
+.pricePill{
+  white-space:nowrap;font-weight:900;font-size:13px;
+  padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+.productDesc{margin:0 0 12px;color: rgba(255,255,255,.80);line-height:1.6;font-weight:600;font-size:14px}
+.list{margin:0;padding-left:18px;color: rgba(255,255,255,.78);line-height:1.7;font-weight:700;font-size:13px}
+.sep{margin:14px 0 10px;height:1px;background: rgba(255,255,255,.10)}
+.payTitle{display:flex;align-items:center;gap:10px;font-weight:900;color: rgba(255,255,255,.88);font-size:13px;margin:0 0 6px}
+.payList{margin:0;padding-left:18px;color: rgba(255,255,255,.78);line-height:1.7;font-weight:800;font-size:13px}
+.ticketNote{margin-top:8px;font-size:12px;color: rgba(255,255,255,.65);font-weight:800}
+.productActions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:10px 14px;border-radius:14px;border:1px solid var(--stroke);
+  background: rgba(255,255,255,.06);
+  color:var(--text);font-weight:900;cursor:pointer;transition:.18s ease;text-decoration:none;
+}
+.btn:hover{transform: translateY(-1px);background: rgba(255,255,255,.10);}
+.btn.primary{border:none;background: linear-gradient(135deg, var(--accent), var(--accent2));box-shadow:0 18px 55px rgba(124,92,255,.20);}
 </style>
 </head>
 
@@ -75,9 +107,9 @@ h1{margin:0;letter-spacing:6px;font-size:44px;text-shadow:0 0 30px rgba(124,92,2
 
       <div class="top-bar">
         <div class="top-actions">
-          <a href="produits.html" class="nav-btn">Produits</a>
+          <a href="produits.html" class="nav-btn accent">Produits</a>
           <a href="index.html" class="nav-btn">Accueil</a>
-          <a href="contact.html" class="nav-btn accent">Contact</a>
+          <a href="contact.html" class="nav-btn">Contact</a>
         </div>
       </div>
     </div>
@@ -85,15 +117,166 @@ h1{margin:0;letter-spacing:6px;font-size:44px;text-shadow:0 0 30px rgba(124,92,2
 
   <section class="section">
     <div class="sectionTitle">
-      <h3>Contact</h3>
-      <p>Écris-nous ici. Tu peux modifier les infos.</p>
+      <h3>Produits</h3>
+      <p>Voici tous les packs. Remplace les textes par tes descriptions.</p>
     </div>
 
-    <div class="card">
-      <p style="margin:0; line-height:1.65; color: rgba(255,255,255,.82); font-weight:700;">
-        Discord : <span style="color: rgba(255,255,255,.92);">Discord.gg/tonlien</span><br>
-        Support : ouvre un ticket sur le serveur.
-      </p>
+    <div class="productsGrid">
+
+      <!-- Pack 1 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Starter</h4>
+          <div class="pricePill">6,50€</div>
+        </div>
+        <p class="productDesc">Description (à modifier).</p>
+        <ul class="list">
+          <li>Avantage 1 (à modifier)</li>
+          <li>Avantage 2 (à modifier)</li>
+          <li>Avantage 3 (à modifier)</li>
+        </ul>
+        <div class="sep"></div>
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList"><li>Paypal</li><li>Carte Bancaire</li><li>Crypto</li></ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+        <div class="productActions">
+          <a class="btn primary" href="contact.html">Acheter</a>
+          <a class="btn" href="contact.html">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Pack 2 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Confort</h4>
+          <div class="pricePill">9,50€</div>
+        </div>
+        <p class="productDesc">Description (à modifier).</p>
+        <ul class="list">
+          <li>Avantage 1 (à modifier)</li>
+          <li>Avantage 2 (à modifier)</li>
+          <li>Avantage 3 (à modifier)</li>
+        </ul>
+        <div class="sep"></div>
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList"><li>Paypal</li><li>Carte Bancaire</li><li>Crypto</li></ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+        <div class="productActions">
+          <a class="btn primary" href="contact.html">Acheter</a>
+          <a class="btn" href="contact.html">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Pack 3 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Boost</h4>
+          <div class="pricePill">13€</div>
+        </div>
+        <p class="productDesc">Description (à modifier).</p>
+        <ul class="list">
+          <li>Avantage 1 (à modifier)</li>
+          <li>Avantage 2 (à modifier)</li>
+          <li>Avantage 3 (à modifier)</li>
+        </ul>
+        <div class="sep"></div>
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList"><li>Paypal</li><li>Carte Bancaire</li><li>Crypto</li></ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+        <div class="productActions">
+          <a class="btn primary" href="contact.html">Acheter</a>
+          <a class="btn" href="contact.html">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Pack 4 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Premium</h4>
+          <div class="pricePill">17€</div>
+        </div>
+        <p class="productDesc">Description (à modifier).</p>
+        <ul class="list">
+          <li>Avantage 1 (à modifier)</li>
+          <li>Avantage 2 (à modifier)</li>
+          <li>Avantage 3 (à modifier)</li>
+        </ul>
+        <div class="sep"></div>
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList"><li>Paypal</li><li>Carte Bancaire</li><li>Crypto</li></ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+        <div class="productActions">
+          <a class="btn primary" href="contact.html">Acheter</a>
+          <a class="btn" href="contact.html">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Pack 5 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Maximum</h4>
+          <div class="pricePill">35€</div>
+        </div>
+        <p class="productDesc">Description (à modifier).</p>
+        <ul class="list">
+          <li>Avantage 1 (à modifier)</li>
+          <li>Avantage 2 (à modifier)</li>
+          <li>Avantage 3 (à modifier)</li>
+        </ul>
+        <div class="sep"></div>
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList"><li>Paypal</li><li>Carte Bancaire</li><li>Crypto</li></ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+        <div class="productActions">
+          <a class="btn primary" href="contact.html">Acheter</a>
+          <a class="btn" href="contact.html">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Pack 6 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Ultra Premium</h4>
+          <div class="pricePill">60€</div>
+        </div>
+        <p class="productDesc">Description (à modifier).</p>
+        <ul class="list">
+          <li>Avantage 1 (à modifier)</li>
+          <li>Avantage 2 (à modifier)</li>
+          <li>Avantage 3 (à modifier)</li>
+        </ul>
+        <div class="sep"></div>
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList"><li>Paypal</li><li>Carte Bancaire</li><li>Crypto</li></ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+        <div class="productActions">
+          <a class="btn primary" href="contact.html">Acheter</a>
+          <a class="btn" href="contact.html">Ouvrir un ticket</a>
+        </div>
+      </div>
+
+      <!-- Pack 7 -->
+      <div class="card">
+        <div class="productHeader">
+          <h4 class="productTitle">Pack Universal</h4>
+          <div class="pricePill">80€</div>
+        </div>
+        <p class="productDesc">Description (à modifier).</p>
+        <ul class="list">
+          <li>Avantage 1 (à modifier)</li>
+          <li>Avantage 2 (à modifier)</li>
+          <li>Avantage 3 (à modifier)</li>
+        </ul>
+        <div class="sep"></div>
+        <p class="payTitle">💎 Moyen de Paiement</p>
+        <ul class="payList"><li>Paypal</li><li>Carte Bancaire</li><li>Crypto</li></ul>
+        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
+        <div class="productActions">
+          <a class="btn primary" href="contact.html">Acheter</a>
+          <a class="btn" href="contact.html">Ouvrir un ticket</a>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -107,4 +290,3 @@ h1{margin:0;letter-spacing:6px;font-size:44px;text-shadow:0 0 30px rgba(124,92,2
 </script>
 </body>
 </html>
-
