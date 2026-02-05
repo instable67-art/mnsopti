@@ -28,11 +28,21 @@
   --shadow: 0 25px 90px rgba(0,0,0,.65);
   --shadowGlow: 0 0 140px rgba(124,92,255,.28);
 }
+
+/* ✅ AJOUT: conteneur de la "top bar" (rien d'autre) */
+.top-bar{
+  margin-top: 10px;
+  display:flex;
+  justify-content:center;
+}
+
+/* boutons */
 .top-actions{
   display: flex;
   gap: 14px;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .nav-btn{
@@ -342,13 +352,14 @@ h1{
     <div class="brand">
       <div class="logoDot"></div>
       <h1>PHANTOM</h1>
+
       <div class="top-bar">
-  <div class="top-actions">
-    <a href="#produits" class="nav-btn">Produits</a>
-    <a href="#offre" class="nav-btn accent">Offre</a>
-    <a href="#contact" class="nav-btn">Contact</a>
-  </div>
-</div>
+        <div class="top-actions">
+          <a href="#produits" class="nav-btn">Produits</a>
+          <a href="#offre" class="nav-btn accent">Offre</a>
+          <a href="#contact" class="nav-btn">Contact</a>
+        </div>
+      </div>
 
     </div>
   </header>
@@ -372,7 +383,7 @@ h1{
           <a class="btn primary" href="#about">Découvrir</a>
           <a class="btn" href="#features">Avantages</a>
         </div>
-       
+
       </div>
     </div>
   </section>
