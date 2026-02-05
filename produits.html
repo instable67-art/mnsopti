@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PHANTOM — Contact</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg0:#050511; --bg1:#07081a;
+  --text:#ffffff; --muted: rgba(255,255,255,.70);
+  --stroke: rgba(255,255,255,.12); --panel: rgba(255,255,255,.06);
+  --accent:#7C5CFF; --accent2:#A855F7; --cyan:#00D4FF;
+  --radius: 20px; --shadow: 0 25px 90px rgba(0,0,0,.65);
+  --shadowGlow: 0 0 140px rgba(124,92,255,.28);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(124,92,255,.30), transparent 60%),
+    radial-gradient(1000px 700px at 80% 28%, rgba(168,85,247,.22), transparent 55%),
+    radial-gradient(900px 600px at 55% 95%, rgba(0,212,255,.12), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+.container{max-width:1150px;margin:0 auto;padding:0 20px}
+
+.top{padding:28px 0 10px;text-align:center}
+.brand{display:inline-flex;flex-direction:column;align-items:center;gap:10px}
+.logoDot{
+  width:42px;height:42px;border-radius:16px;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  box-shadow: 0 16px 45px rgba(124,92,255,.35);
+}
+h1{margin:0;letter-spacing:6px;font-size:44px;text-shadow:0 0 30px rgba(124,92,255,.55)}
+.top-bar{margin-top:10px;display:flex;justify-content:center}
+.top-actions{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap}
+.nav-btn{
+  padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  color:var(--text);text-decoration:none;
+  background: rgba(255,255,255,0.06);
+  border:1px solid var(--stroke);
+  backdrop-filter: blur(10px);
+  transition: all .25s ease;
+}
+.nav-btn:hover{background: rgba(255,255,255,0.12);transform: translateY(-1px)}
+.nav-btn.accent{
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: var(--shadow);
+  border:none;
+}
+
+.section{padding:26px 0 40px}
+.sectionTitle{display:flex;justify-content:space-between;gap:14px;align-items:flex-end;margin:10px 0 12px}
+.sectionTitle h3{margin:0;font-size:24px}
+.sectionTitle p{margin:0;color:var(--muted);line-height:1.55;max-width:70ch}
+.card{background: var(--panel);border:1px solid var(--stroke);border-radius: var(--radius);padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
+.footer{padding:22px 0 38px;border-top:1px solid rgba(255,255,255,.08);color: rgba(255,255,255,.65);font-size:13px}
+@media (max-width: 900px){ h1{font-size:36px;letter-spacing:4px} }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <header class="top">
+    <div class="brand">
+      <div class="logoDot"></div>
+      <h1>PHANTOM</h1>
+
+      <div class="top-bar">
+        <div class="top-actions">
+          <a href="produits.html" class="nav-btn">Produits</a>
+          <a href="index.html" class="nav-btn">Accueil</a>
+          <a href="contact.html" class="nav-btn accent">Contact</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="sectionTitle">
+      <h3>Contact</h3>
+      <p>Écris-nous ici. Tu peux modifier les infos.</p>
+    </div>
+
+    <div class="card">
+      <p style="margin:0; line-height:1.65; color: rgba(255,255,255,.82); font-weight:700;">
+        Discord : <span style="color: rgba(255,255,255,.92);">Discord.gg/tonlien</span><br>
+        Support : ouvre un ticket sur le serveur.
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    © <span id="year"></span> PHANTOM
+  </footer>
+</div>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
 
