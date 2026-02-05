@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PHANTOM</title>
+<title>PHANTOM — Contact</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,27 +11,14 @@
 
 <style>
 :root{
-  --bg0:#050511;
-  --bg1:#07081a;
-
-  --text:#ffffff;
-  --muted: rgba(255,255,255,.70);
-
-  --stroke: rgba(255,255,255,.12);
-  --panel: rgba(255,255,255,.06);
-
-  --accent:#7C5CFF;
-  --accent2:#A855F7;
-  --cyan:#00D4FF;
-
-  --radius: 20px;
-  --shadow: 0 25px 90px rgba(0,0,0,.65);
+  --bg0:#050511; --bg1:#07081a;
+  --text:#ffffff; --muted: rgba(255,255,255,.70);
+  --stroke: rgba(255,255,255,.12); --panel: rgba(255,255,255,.06);
+  --accent:#7C5CFF; --accent2:#A855F7; --cyan:#00D4FF;
+  --radius: 20px; --shadow: 0 25px 90px rgba(0,0,0,.65);
   --shadowGlow: 0 0 140px rgba(124,92,255,.28);
 }
-
 *{box-sizing:border-box}
-html,body{height:100%}
-
 body{
   margin:0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
@@ -41,758 +28,82 @@ body{
     radial-gradient(1000px 700px at 80% 28%, rgba(168,85,247,.22), transparent 55%),
     radial-gradient(900px 600px at 55% 95%, rgba(0,212,255,.12), transparent 60%),
     linear-gradient(180deg, var(--bg0), var(--bg1));
-  overflow-x:hidden;
 }
+.container{max-width:1150px;margin:0 auto;padding:0 20px}
 
-.container{
-  max-width: 1150px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* ✅ top bar */
-.top-bar{
-  margin-top: 10px;
-  display:flex;
-  justify-content:center;
-}
-
-.top-actions{
-  display: flex;
-  gap: 14px;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.nav-btn{
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  text-decoration: none;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--stroke);
-  backdrop-filter: blur(10px);
-  transition: all .25s ease;
-}
-
-.nav-btn:hover{
-  background: rgba(255,255,255,0.12);
-  transform: translateY(-1px);
-}
-
-.nav-btn.accent{
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  box-shadow: var(--shadow);
-  border: none;
-}
-
-/* top */
-.top{
-  padding: 28px 0 10px;
-  text-align:center;
-}
-
-.brand{
-  display:inline-flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-}
-
+.top{padding:28px 0 10px;text-align:center}
+.brand{display:inline-flex;flex-direction:column;align-items:center;gap:10px}
 .logoDot{
   width:42px;height:42px;border-radius:16px;
   background: linear-gradient(135deg, var(--accent), var(--cyan));
   box-shadow: 0 16px 45px rgba(124,92,255,.35);
 }
-
-h1{
-  margin:0;
-  letter-spacing: 6px;
-  font-size: 44px;
-  text-shadow: 0 0 30px rgba(124,92,255,.55);
-}
-
-.subtitle{
-  margin:0;
-  color: rgba(255,255,255,.72);
-  font-weight:700;
-  font-size: 14px;
-}
-
-/* hero */
-.hero{
-  padding: 18px 0 8px;
-}
-
-.heroBox{
-  position:relative;
-  border-radius: 26px;
-  overflow:hidden;
-  border:1px solid rgba(124,92,255,.32);
-  box-shadow: var(--shadow), var(--shadowGlow);
-  transform-style: preserve-3d;
-}
-
-.heroMedia{
-  position:relative;
-  width:100%;
-  cursor:pointer;
-  user-select:none;
-  -webkit-tap-highlight-color: transparent;
-  transform-style: preserve-3d;
-  transition: transform .22s ease;
-}
-
-.heroMedia.is-tilting{
-  transition: transform .06s linear;
-}
-
-.heroMedia img{
-  width:100%;
-  display:block;
-  filter: brightness(.92) saturate(1.18);
-}
-
-.heroOverlay{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    radial-gradient(60% 60% at 50% 38%, rgba(124,92,255,.45), transparent 70%),
-    radial-gradient(60% 60% at 70% 45%, rgba(0,212,255,.14), transparent 75%),
-    linear-gradient(to bottom, rgba(5,5,15,.12), rgba(5,5,15,.90));
-}
-
-.heroGlow{
-  position:absolute;
-  inset:-80px;
-  pointer-events:none;
-  filter: blur(12px);
-  opacity:.85;
-  background:
-    radial-gradient(closest-side at 50% 35%, rgba(168,85,247,.22), transparent 70%),
-    radial-gradient(closest-side at 55% 55%, rgba(124,92,255,.16), transparent 70%);
-  transition: opacity .25s ease;
-}
-
-.heroMedia.is-pulse ~ .heroGlow{
-  opacity: 1;
-  animation: glowPulse .55s ease;
-}
-
-@keyframes glowPulse{
-  0%{transform: scale(.98); opacity:.7}
-  55%{transform: scale(1.01); opacity:1}
-  100%{transform: scale(1); opacity:.85}
-}
-
-.heroText{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding: 34px;
-  max-width: 720px;
-  transform: translateZ(25px);
-  pointer-events:none;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.05);
-  font-weight:900;
-  font-size:12px;
-  color: rgba(255,255,255,.92);
-  width: fit-content;
-}
-
-.dot{
-  width:8px;height:8px;border-radius:999px;
-  background: linear-gradient(135deg, var(--accent), var(--cyan));
-  box-shadow: 0 0 0 4px rgba(124,92,255,.18);
-}
-
-.heroTitle{
-  margin: 14px 0 10px;
-  font-size: 42px;
-  line-height: 1.05;
-  text-shadow: 0 0 30px rgba(124,92,255,.50);
-}
-
-.lead{
-  margin:0 0 18px;
-  color: rgba(255,255,255,.82);
-  line-height: 1.65;
-  font-weight: 600;
-}
-
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  pointer-events:auto;
-}
-
-.btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius:14px;
+h1{margin:0;letter-spacing:6px;font-size:44px;text-shadow:0 0 30px rgba(124,92,255,.55)}
+.top-bar{margin-top:10px;display:flex;justify-content:center}
+.top-actions{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap}
+.nav-btn{
+  padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  color:var(--text);text-decoration:none;
+  background: rgba(255,255,255,0.06);
   border:1px solid var(--stroke);
-  background: rgba(255,255,255,.06);
-  color:var(--text);
-  font-weight:900;
-  cursor:pointer;
-  transition: .18s ease;
-  text-decoration:none;
+  backdrop-filter: blur(10px);
+  transition: all .25s ease;
 }
-
-.btn:hover{
-  transform: translateY(-1px);
-  background: rgba(255,255,255,.10);
-}
-
-.btn.primary{
-  border:none;
+.nav-btn:hover{background: rgba(255,255,255,0.12);transform: translateY(-1px)}
+.nav-btn.accent{
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  box-shadow: 0 18px 55px rgba(124,92,255,.20);
+  box-shadow: var(--shadow);
+  border:none;
 }
 
-.hint{
-  margin-top:12px;
-  font-size:12px;
-  color: rgba(255,255,255,.68);
-  font-weight:800;
-}
-
-/* sections */
-.section{
-  padding: 26px 0 40px;
-}
-
-.sectionTitle{
-  display:flex;
-  justify-content:space-between;
-  gap:14px;
-  align-items:flex-end;
-  margin: 10px 0 12px;
-}
-
-.sectionTitle h3{
-  margin:0;
-  font-size: 24px;
-}
-
-.sectionTitle p{
-  margin:0;
-  color: var(--muted);
-  line-height:1.55;
-  max-width: 70ch;
-}
-
-.card{
-  background: var(--panel);
-  border:1px solid var(--stroke);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: 0 12px 40px rgba(0,0,0,.55);
-}
-
-.grid{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:12px;
-  margin-top: 12px;
-}
-
-@media (max-width: 900px){
-  h1{font-size:36px; letter-spacing:4px}
-  .heroTitle{font-size:34px}
-  .heroText{position:relative; max-width:none; padding:18px}
-  .grid{grid-template-columns:1fr}
-  .heroMedia img{min-height: 320px; object-fit: cover}
-}
-
-.feature h4{
-  margin: 10px 0 6px;
-  font-size: 15px;
-}
-.feature p{
-  margin:0;
-  color: var(--muted);
-  line-height:1.55;
-  font-size: 14px;
-}
-
-/* ✅ Produits */
-.productsGrid{
-  display:grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 12px;
-}
-
-@media (max-width: 900px){
-  .productsGrid{grid-template-columns:1fr}
-}
-
-.productHeader{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom: 10px;
-}
-
-.productTitle{
-  font-size: 16px;
-  font-weight: 900;
-  margin:0;
-}
-
-.pricePill{
-  white-space:nowrap;
-  font-weight: 900;
-  font-size: 13px;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-}
-
-.productDesc{
-  margin: 0 0 12px;
-  color: rgba(255,255,255,.80);
-  line-height: 1.6;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.list{
-  margin: 0;
-  padding-left: 18px;
-  color: rgba(255,255,255,.78);
-  line-height: 1.7;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.sep{
-  margin: 14px 0 10px;
-  height:1px;
-  background: rgba(255,255,255,.10);
-}
-
-.payTitle{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight: 900;
-  color: rgba(255,255,255,.88);
-  font-size: 13px;
-  margin:0 0 6px;
-}
-
-.payList{
-  margin:0;
-  padding-left: 18px;
-  color: rgba(255,255,255,.78);
-  line-height: 1.7;
-  font-weight: 800;
-  font-size: 13px;
-}
-
-.ticketNote{
-  margin-top: 8px;
-  font-size: 12px;
-  color: rgba(255,255,255,.65);
-  font-weight: 800;
-}
-
-.productActions{
-  margin-top: 12px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.footer{
-  padding: 22px 0 38px;
-  border-top:1px solid rgba(255,255,255,.08);
-  color: rgba(255,255,255,.65);
-  font-size: 13px;
-}
+.section{padding:26px 0 40px}
+.sectionTitle{display:flex;justify-content:space-between;gap:14px;align-items:flex-end;margin:10px 0 12px}
+.sectionTitle h3{margin:0;font-size:24px}
+.sectionTitle p{margin:0;color:var(--muted);line-height:1.55;max-width:70ch}
+.card{background: var(--panel);border:1px solid var(--stroke);border-radius: var(--radius);padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
+.footer{padding:22px 0 38px;border-top:1px solid rgba(255,255,255,.08);color: rgba(255,255,255,.65);font-size:13px}
+@media (max-width: 900px){ h1{font-size:36px;letter-spacing:4px} }
 </style>
 </head>
 
 <body>
-
 <div class="container">
-  <header class="top" id="Accueil">
+  <header class="top">
     <div class="brand">
       <div class="logoDot"></div>
       <h1>PHANTOM</h1>
 
       <div class="top-bar">
         <div class="top-actions">
-          <a href="#produits" class="nav-btn">Produits</a>
-          <a href="#Accueil" class="nav-btn accent">Accueil</a>
-          <a href="#contact" class="nav-btn">Contact</a>
+          <a href="produits.html" class="nav-btn">Produits</a>
+          <a href="index.html" class="nav-btn">Accueil</a>
+          <a href="contact.html" class="nav-btn accent">Contact</a>
         </div>
       </div>
-
     </div>
   </header>
 
-  <section class="hero">
-    <div class="heroBox">
-      <div id="heroMedia" class="heroMedia" role="button" tabindex="0" aria-label="Animation bannière (clique)">
-        <img src="phantom-banner.png" alt="PHANTOM Banner">
-        <div class="heroOverlay"></div>
-      </div>
-      <div class="heroGlow"></div>
-
-      <div class="heroText">
-        <span class="badge"><span class="dot"></span> PHANTOM GTAV</span>
-        <div class="heroTitle">Phantom, le SHOP parfais pour les LOBBY GTAV PC.<br>Une bonne avance sur les autres</div>
-        <p class="lead">
-          Un design noir/violet, une bannière impactante, et une base propre pour ajouter tes sections (boutique, services, contact).
-        </p>
-        <div class="actions">
-          <a class="btn primary" href="#produits">Voir les Produits</a>
-          <a class="btn" href="#features">Avantages</a>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="about">
-    <div class="sectionTitle">
-      <h3>À propos de PHANTOM</h3>
-      <p>Le site parfais pour trouver votre bohneur, n'hésiter pas à rejoindre notre discord si vous avez des questions.</p>
-    </div>
-    <div class="card">
-      <p style="margin:0; line-height:1.65; color: rgba(255,255,255,.82); font-weight:600;">
-        Qu'est ce que Phantom ?, Phantom a été crée il y a 2 mois maintenant, nous sommes 2 Créateurs de ce projet, nous ferons tout pour l'enmener jusqu'au bout. Nous sommes actif avec un très bon support 24/24H
-        Il y a maintenant qu'on a décidé de lancer notre site afin d'avoir plus de visibilité. N'attend pas pour acheter fonce !!
-      </p>
-    </div>
-  </section>
-
-  <section class="section" id="features">
-    <div class="sectionTitle">
-      <h3>Avantages</h3>
-      <p>Un Support de qualité, avec les meilleurs prix sur le marché.</p>
-    </div>
-
-    <div class="grid">
-      <div class="card feature">
-        <h4>⚡ Rapide & efficace !</h4>
-        <p>Livraison Rapide et en Main Propre.</p>
-      </div>
-      <div class="card feature">
-        <h4>✨ Service Pro</h4>
-        <p>Nous avons de l'expérience dans notre domaine, donc pas d'inquiétude.</p>
-      </div>
-      <div class="card feature">
-        <h4>📱 Avancement</h4>
-        <p>Avec ce que nous proposons, vous aurez 100% de meilleurs statistiques qu'avant sur votre compte !</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ✅ NOUVELLE SECTION PRODUITS (sans photos) -->
-  <section class="section" id="produits">
-    <div class="sectionTitle">
-      <h3>Produits</h3>
-      <p>Choisis ton pack. (Texte modifiable : tu peux remplacer par tes descriptions finales.)</p>
-    </div>
-
-    <div class="productsGrid">
-
-      <!-- Produit 1 -->
-      <div class="card">
-        <div class="productHeader">
-          <h4 class="productTitle">Pack Starter</h4>
-          <div class="pricePill">6,50€</div>
-        </div>
-        <p class="productDesc">Description ici (remplace par ton texte).</p>
-        <ul class="list">
-          <li>Contenu / avantage 1</li>
-          <li>Contenu / avantage 2</li>
-          <li>Contenu / avantage 3</li>
-        </ul>
-
-        <div class="sep"></div>
-
-        <p class="payTitle">💎 Moyen de Paiement</p>
-        <ul class="payList">
-          <li>Paypal</li>
-          <li>Carte Bancaire</li>
-          <li>Crypto</li>
-        </ul>
-        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
-
-        <div class="productActions">
-          <a class="btn primary" href="#contact">Acheter</a>
-          <a class="btn" href="#contact">Ouvrir un ticket</a>
-        </div>
-      </div>
-
-      <!-- Produit 2 -->
-      <div class="card">
-        <div class="productHeader">
-          <h4 class="productTitle">Pack Confort</h4>
-          <div class="pricePill">9,50€</div>
-        </div>
-        <p class="productDesc">Description ici (remplace par ton texte).</p>
-        <ul class="list">
-          <li>Contenu / avantage 1</li>
-          <li>Contenu / avantage 2</li>
-          <li>Contenu / avantage 3</li>
-        </ul>
-
-        <div class="sep"></div>
-
-        <p class="payTitle">💎 Moyen de Paiement</p>
-        <ul class="payList">
-          <li>Paypal</li>
-          <li>Carte Bancaire</li>
-          <li>Crypto</li>
-        </ul>
-        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
-
-        <div class="productActions">
-          <a class="btn primary" href="#contact">Acheter</a>
-          <a class="btn" href="#contact">Ouvrir un ticket</a>
-        </div>
-      </div>
-
-      <!-- Produit 3 -->
-      <div class="card">
-        <div class="productHeader">
-          <h4 class="productTitle">Pack Boost</h4>
-          <div class="pricePill">13€</div>
-        </div>
-        <p class="productDesc">Description ici (remplace par ton texte).</p>
-        <ul class="list">
-          <li>Contenu / avantage 1</li>
-          <li>Contenu / avantage 2</li>
-          <li>Contenu / avantage 3</li>
-        </ul>
-
-        <div class="sep"></div>
-
-        <p class="payTitle">💎 Moyen de Paiement</p>
-        <ul class="payList">
-          <li>Paypal</li>
-          <li>Carte Bancaire</li>
-          <li>Crypto</li>
-        </ul>
-        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
-
-        <div class="productActions">
-          <a class="btn primary" href="#contact">Acheter</a>
-          <a class="btn" href="#contact">Ouvrir un ticket</a>
-        </div>
-      </div>
-
-      <!-- Produit 4 -->
-      <div class="card">
-        <div class="productHeader">
-          <h4 class="productTitle">Pack Premium</h4>
-          <div class="pricePill">17€</div>
-        </div>
-        <p class="productDesc">Description ici (remplace par ton texte).</p>
-        <ul class="list">
-          <li>Contenu / avantage 1</li>
-          <li>Contenu / avantage 2</li>
-          <li>Contenu / avantage 3</li>
-        </ul>
-
-        <div class="sep"></div>
-
-        <p class="payTitle">💎 Moyen de Paiement</p>
-        <ul class="payList">
-          <li>Paypal</li>
-          <li>Carte Bancaire</li>
-          <li>Crypto</li>
-        </ul>
-        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
-
-        <div class="productActions">
-          <a class="btn primary" href="#contact">Acheter</a>
-          <a class="btn" href="#contact">Ouvrir un ticket</a>
-        </div>
-      </div>
-
-      <!-- Produit 5 -->
-      <div class="card">
-        <div class="productHeader">
-          <h4 class="productTitle">Pack Maximum</h4>
-          <div class="pricePill">35€</div>
-        </div>
-        <p class="productDesc">Description ici (remplace par ton texte).</p>
-        <ul class="list">
-          <li>Contenu / avantage 1</li>
-          <li>Contenu / avantage 2</li>
-          <li>Contenu / avantage 3</li>
-        </ul>
-
-        <div class="sep"></div>
-
-        <p class="payTitle">💎 Moyen de Paiement</p>
-        <ul class="payList">
-          <li>Paypal</li>
-          <li>Carte Bancaire</li>
-          <li>Crypto</li>
-        </ul>
-        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
-
-        <div class="productActions">
-          <a class="btn primary" href="#contact">Acheter</a>
-          <a class="btn" href="#contact">Ouvrir un ticket</a>
-        </div>
-      </div>
-
-      <!-- Produit 6 -->
-      <div class="card">
-        <div class="productHeader">
-          <h4 class="productTitle">Pack Ultra Premium</h4>
-          <div class="pricePill">60€</div>
-        </div>
-        <p class="productDesc">Description ici (remplace par ton texte).</p>
-        <ul class="list">
-          <li>Contenu / avantage 1</li>
-          <li>Contenu / avantage 2</li>
-          <li>Contenu / avantage 3</li>
-        </ul>
-
-        <div class="sep"></div>
-
-        <p class="payTitle">💎 Moyen de Paiement</p>
-        <ul class="payList">
-          <li>Paypal</li>
-          <li>Carte Bancaire</li>
-          <li>Crypto</li>
-        </ul>
-        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
-
-        <div class="productActions">
-          <a class="btn primary" href="#contact">Acheter</a>
-          <a class="btn" href="#contact">Ouvrir un ticket</a>
-        </div>
-      </div>
-
-      <!-- Produit 7 -->
-      <div class="card">
-        <div class="productHeader">
-          <h4 class="productTitle">Pack Universal</h4>
-          <div class="pricePill">80€</div>
-        </div>
-        <p class="productDesc">Description ici (remplace par ton texte).</p>
-        <ul class="list">
-          <li>Contenu / avantage 1</li>
-          <li>Contenu / avantage 2</li>
-          <li>Contenu / avantage 3</li>
-        </ul>
-
-        <div class="sep"></div>
-
-        <p class="payTitle">💎 Moyen de Paiement</p>
-        <ul class="payList">
-          <li>Paypal</li>
-          <li>Carte Bancaire</li>
-          <li>Crypto</li>
-        </ul>
-        <div class="ticketNote">Pour d'autres moyens de paiement, veuillez ouvrir un ticket.</div>
-
-        <div class="productActions">
-          <a class="btn primary" href="#contact">Acheter</a>
-          <a class="btn" href="#contact">Ouvrir un ticket</a>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ✅ CONTACT -->
-  <section class="section" id="contact">
+  <section class="section">
     <div class="sectionTitle">
       <h3>Contact</h3>
-      <p>Écris-nous sur Discord pour commander ou poser une question.</p>
+      <p>Écris-nous ici. Tu peux modifier les infos.</p>
     </div>
+
     <div class="card">
       <p style="margin:0; line-height:1.65; color: rgba(255,255,255,.82); font-weight:700;">
-        Discord : <span style="color: rgba(255,255,255,.92);">Discord.gg/phantomgtavlobby</span><br>
+        Discord : <span style="color: rgba(255,255,255,.92);">Discord.gg/tonlien</span><br>
         Support : ouvre un ticket sur le serveur.
       </p>
     </div>
   </section>
 
   <footer class="footer">
-    © <span id="year"></span> PHANTOM — Discord.gg/phantomgtavlobby.
+    © <span id="year"></span> PHANTOM
   </footer>
 </div>
 
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
-
-  // Click-to-move (tilt) on hero
-  const heroMedia = document.getElementById("heroMedia");
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-
-  function resetTilt(){
-    heroMedia.classList.remove("is-tilting");
-    heroMedia.style.transform = `perspective(900px) rotateX(0deg) rotateY(0deg)`;
-  }
-  function pulse(){
-    heroMedia.classList.add("is-pulse");
-    setTimeout(() => heroMedia.classList.remove("is-pulse"), 420);
-  }
-  function applyTilt(clientX, clientY){
-    const r = heroMedia.getBoundingClientRect();
-    const x = (clientX - r.left) / r.width;
-    const y = (clientY - r.top) / r.height;
-
-    const rotY = clamp((x - 0.5) * 18, -10, 10);
-    const rotX = clamp((0.5 - y) * 18, -10, 10);
-
-    heroMedia.classList.add("is-tilting");
-    heroMedia.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-  }
-
-  function handleClickLikeEvent(ev){
-    const p = (ev.touches && ev.touches[0]) ? ev.touches[0] : ev;
-    applyTilt(p.clientX, p.clientY);
-    pulse();
-    setTimeout(resetTilt, 520);
-  }
-
-  heroMedia.addEventListener("click", handleClickLikeEvent, { passive: true });
-  heroMedia.addEventListener("touchstart", handleClickLikeEvent, { passive: true });
-
-  heroMedia.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      const r = heroMedia.getBoundingClientRect();
-      applyTilt(r.left + r.width/2, r.top + r.height/2);
-      pulse();
-      setTimeout(resetTilt, 520);
-      e.preventDefault();
-    }
-  });
 </script>
 </body>
 </html>
